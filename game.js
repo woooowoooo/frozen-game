@@ -1,10 +1,197 @@
-// Canvas
-let canvas = document.getElementById("game");
-let gameSize = {
-	x: 1920,
-	y: 1280
-};
-canvas.width = gameSize.x;
-canvas.height = gameSize.y;
-let canvasContext = canvas.getContext("2d");
-canvasContext.imageSmoothingEnabled = false;
+import StateMachine from "./state-machine/module.js";
+import {
+	canvas, context, images, sounds, stateMachines, objects, settings,
+	clear, render, loadResources,
+	Drawable, MuteButton, TextButton, TextToggle, Slider, TextInput
+} from "./index.js";
+// import {newGame, onKeyDown, onKeyUp, update, TODOrender} from "./TODO.js";
+// State machine
+const stateMachine = new StateMachine({
+	init: "boot",
+	transitions: [{
+		name: "toMenu",
+		from: ["boot", "menu", "settings", "help", "credits", "gameOver"],
+		to: "menu"
+	}, {
+		name: "start",
+		from: "menu",
+		to: "game"
+	}, {
+		name: "toSettings",
+		from: "menu",
+		to: "settings"
+	}, {
+		name: "toHelp",
+		from: "menu",
+		to: "help"
+	}, {
+		name: "toCredits",
+		from: "menu",
+		to: "credits"
+	}, {
+		name: "lose",
+		from: "game",
+		to: "gameOver"
+	}, {
+		name: "retry",
+		from: "gameOver",
+		to: "game"
+	}],
+	methods: {
+		onTransition(lifecycle) {
+			console.log(`Transition: ${lifecycle.transition}\tNew State: ${lifecycle.to}`);
+		},
+		onAfterTransition() {
+			render();
+		},
+		async onBoot() {
+			// Loading screen
+			objects.set("background", new Drawable(() => {
+				context.fillStyle = "black";
+				context.fillRect(0, 0, 1920, 1280);
+			}));
+			objects.set("loading", new Drawable(() => {
+				context.fillStyle = "white";
+				context.fontSize = 16;
+				context.textAlign = "center";
+				context.fillText("LOADING", 960, 400);
+				context.fontSize = 8;
+				context.fillText("If this doesn't go away,", 960, 800);
+				context.fillText("refresh the page.", 960, 960);
+			}));
+			render();
+			await loadResources();
+			console.log("Resources loaded.", images, sounds);
+			objects.delete("loading");
+			// Prompt for user interaction so autoplay won't get blocked
+			objects.set("prompt", new Drawable(() => {
+				context.fillStyle = "white";
+				context.fontSize = 8;
+				context.textAlign = "center";
+				context.fillText("Loading finished.", 960, 400);
+				context.fillText("CLICK ANYWHERE", 960, 800);
+				context.fillText("TO CONTINUE", 960, 960);
+			}));
+			canvas.addEventListener("click", stateMachine.toMenu, {once: true});
+		},
+		onMenu() {
+			clear();
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("title", new Drawable(() => {
+				context.fillStyle = "white";
+				context.fontSize = 20;
+				context.fillText("Frozen Game", 960, 400);
+			}));
+			objects.set("game", new TextButton(560, 640, "Game", () => window.alert("Skill issue") /* stateMachine.start */, 640));
+			objects.set("settings", new TextButton(560, 800, "Settings", stateMachine.toSettings, 640));
+			objects.set("help", new TextButton(560, 960, "Help", stateMachine.toHelp, 640));
+			objects.set("credits", new TextButton(1360, 960, "Credits", stateMachine.toCredits, 640));
+			objects.set("mute", new MuteButton());
+		},
+		onSettings() {
+			clear();
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("text", new Drawable(() => {
+				context.fillStyle = "white";
+				context.textAlign = "right";
+				context.fillText("Volume:", 600, 760 + 28);
+			}));
+			objects.set("volume", new Slider(720, 760, 960, "volume", 0, 100, 10, false, () => {
+				for (const sound of Object.values(sounds)) {
+					sound.volume = settings.volume / 100;
+				}
+			}));
+			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("mute", new MuteButton());
+		},
+		onHelp() {
+			clear();
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("help", new Drawable(() => {
+				context.fillStyle = "white";
+				context.fontSize = 6;
+				context.fillText("Don't expect a functional game", 960, 320);
+			}));
+			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("mute", new MuteButton());
+		},
+		onCredits() {
+			clear();
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("credits", new Drawable(() => {
+				context.fillStyle = "white";
+				context.fontSize = 8;
+				context.fillText("Everything", 960, 360);
+				context.fillText("woooowoooo", 960, 440);
+			}));
+			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("mute", new MuteButton());
+		},
+		onGame() {
+			clear();
+			// newGame();
+			// window.addEventListener("keydown", onKeyDown);
+			// window.addEventListener("keyup", onKeyUp);
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("mute", new MuteButton());
+			// objects.set("TODO", new Drawable(TODORender));
+			requestAnimationFrame(loop);
+		},
+		onGameOver(_, text) {
+			// window.removeEventListener("keydown", onKeyDown);
+			// window.removeEventListener("keyup", onKeyUp);
+			for (const sound of Object.values(sounds).filter(sound => !sound.paused)) {
+				sound.pause();
+			}
+			objects.set("endScreen", new Drawable(() => {
+				context.fillStyle = "rgba(0, 0, 0, 0.5)";
+				context.fillRect(0, 0, 1920, 1280);
+				context.fillStyle = "white";
+				context.fontSize = 16;
+				context.textAlign = "center";
+				context.fillText("GAME OVER", 960, 400);
+				context.fontSize = 8;
+				let textY = 540;
+				for (const line of text) {
+					context.fillText(line, 960, textY);
+					textY += 100;
+				}
+			}));
+			objects.set("menu", new TextButton(672, 880, "Menu", stateMachine.toMenu, 480));
+			objects.set("retry", new TextButton(1248, 880, "Retry", stateMachine.retry, 480));
+		},
+		onLeaveGameOver() {
+			for (const sound of Object.values(sounds).filter(sound => sound.paused)) {
+				sound.play();
+			}
+		}
+	}
+});
+stateMachines.main = stateMachine;
+// Main loop
+const FPS = 60;
+const FRAME_TIME = 1000 / FPS;
+let lastTime = window.performance.now();
+function loop(time) {
+	// Lock to 60 fps
+	if (time - lastTime < FRAME_TIME) {
+		requestAnimationFrame(loop);
+		return;
+	}
+	lastTime = time - (time % FRAME_TIME);
+	frames++;
+	// Break on game loss
+	if (!stateMachine.is("game")) {
+		return;
+	}
+	// Handling is done in TODO.js
+	// Update game state
+	/* const [changed, endText] = update();
+	if (endText != null) {
+		stateMachine.lose(endText);
+	}
+	if (changed) { // If board has updated
+		render();
+	} */
+	requestAnimationFrame(loop);
+}
