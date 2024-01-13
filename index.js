@@ -32,7 +32,7 @@ const settings = new Proxy(JSON.parse(localStorage.getItem("frozenSettings")) ??
 // Helper functions
 Object.defineProperty(context, "fontSize", {
 	set: size => {
-		context.font = `${size * 1024 / 100}px "Avenir Next", sans-serif`;
+		context.font = `${size * 10}px sans-serif`; // TODO: Update font
 	}
 });
 export function clear() {
@@ -67,8 +67,8 @@ function wrapClickEvent(callback, hitbox, checkCondition) {
 canvas.addEventListener("click", getMousePosition);
 // Loading assets
 export async function loadResources() {
-	const imageNames = []; // TODO
-	const soundNames = [];
+	const imageNames = ["background", "buttonStart", "buttonMiddle", "buttonEnd", "soundOff", "soundOn"]; // TODO
+	const soundNames = ["goldberg"];
 	const promises = [];
 	const initialize = function (cache, id, path, type, eventType) {
 		cache[id] = document.createElement(type);

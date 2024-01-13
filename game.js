@@ -76,9 +76,10 @@ const stateMachine = new StateMachine({
 		},
 		onMenu() {
 			clear();
+			sounds.goldberg.play();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("title", new Drawable(() => {
-				context.fillStyle = "white";
+				context.fillStyle = "black";
 				context.fontSize = 20;
 				context.fillText("Frozen Game", 960, 400);
 			}));
@@ -92,7 +93,7 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("text", new Drawable(() => {
-				context.fillStyle = "white";
+				context.fillStyle = "black";
 				context.textAlign = "right";
 				context.fillText("Volume:", 600, 760 + 28);
 			}));
@@ -108,7 +109,7 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("help", new Drawable(() => {
-				context.fillStyle = "white";
+				context.fillStyle = "black";
 				context.fontSize = 6;
 				context.fillText("Don't expect a functional game", 960, 320);
 			}));
@@ -119,7 +120,7 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("credits", new Drawable(() => {
-				context.fillStyle = "white";
+				context.fillStyle = "black";
 				context.fontSize = 8;
 				context.fillText("Everything", 960, 360);
 				context.fillText("woooowoooo", 960, 440);
@@ -137,7 +138,7 @@ const stateMachine = new StateMachine({
 			// objects.set("TODO", new Drawable(TODORender));
 			requestAnimationFrame(loop);
 		},
-		onGameOver(_, text) {
+		/* onGameOver(_, text) {
 			// window.removeEventListener("keydown", onKeyDown);
 			// window.removeEventListener("keyup", onKeyUp);
 			for (const sound of Object.values(sounds).filter(sound => !sound.paused)) {
@@ -164,7 +165,7 @@ const stateMachine = new StateMachine({
 			for (const sound of Object.values(sounds).filter(sound => sound.paused)) {
 				sound.play();
 			}
-		}
+		} */
 	}
 });
 stateMachines.main = stateMachine;
