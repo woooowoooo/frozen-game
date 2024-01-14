@@ -70,9 +70,6 @@ canvas.addEventListener("click", getMousePosition);
 export async function loadResources() {
 	const imageData = {
 		background: "svg",
-		buttonStart: "png",
-		buttonMiddle: "png",
-		buttonEnd: "png",
 		soundOff: "png",
 		soundOn: "png"
 	};
@@ -98,10 +95,11 @@ export async function loadResources() {
 	}
 	return Promise.all(promises);
 }
-// Classes
+// UI Elements
 export class Drawable {
 	constructor (draw) {
 		this.draw = draw;
+		draw();
 	}
 }
 class Button extends Drawable {
@@ -139,19 +137,17 @@ export class MuteButton extends Button {
 }
 export class TextButton extends Button {
 	constructor (x, y, text, callback, width) {
-		const buttonWidth = width ? width - 160 : Math.ceil(context.measureText(text).width / 32) * 32;
 		const hitbox = new Path2D();
-		hitbox.rect(x - buttonWidth / 2 - 64, y, buttonWidth + 128, 128);
-		hitbox.rect(x - buttonWidth / 2 - 80, y + 16, buttonWidth + 160, 96);
+		hitbox.rect(x - width / 2, y, width, 128);
 		hitbox.closePath();
 		function draw() {
+			context.fillStyle = "hsl(0, 0%, 80%)";
+			context.fill(hitbox);
+			context.fillStyle = "hsl(0, 0%, 60%)";
+			context.fillRect(x - width / 2, y + 112, width, 16);
 			context.fontSize = 8;
-			context.drawImage(images.buttonStart, x - buttonWidth / 2 - 80, y, 80, 128);
-			context.drawImage(images.buttonMiddle, x - buttonWidth / 2, y, buttonWidth, 128);
-			context.drawImage(images.buttonEnd, x + buttonWidth / 2, y, 80, 128);
-			context.textAlign = "center";
 			context.fillStyle = "black";
-			context.fillText(text, x, y + 92);
+			context.fillText(text, x, y + 88);
 		}
 		super(hitbox, draw, callback);
 	}
