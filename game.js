@@ -95,14 +95,14 @@ const stateMachine = new StateMachine({
 			objects.set("text", new Drawable(() => {
 				context.fillStyle = "black";
 				context.textAlign = "right";
-				context.fillText("Volume:", 600, 760 + 20);
+				context.fillText("Volume:", 600, 640 + 20);
 			}));
-			objects.set("volume", new Slider(1200, 760, 960, "volume", 0, 100, 10, false, () => {
+			objects.set("volume", new Slider(1200, 640, 960, "volume", 0, 100, 10, false, () => {
 				for (const sound of Object.values(sounds)) {
 					sound.volume = settings.volume / 100;
 				}
 			}));
-			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
 		},
 		onHelp() {
@@ -110,10 +110,10 @@ const stateMachine = new StateMachine({
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("help", new Drawable(() => {
 				context.fillStyle = "black";
-				context.fontSize = 6;
-				context.fillText("Don't expect a functional game", 960, 320);
+				context.fontSize = 8;
+				context.fillText("Don't expect a functional game", 960, 400);
 			}));
-			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
 		},
 		onCredits() {
@@ -122,10 +122,10 @@ const stateMachine = new StateMachine({
 			objects.set("credits", new Drawable(() => {
 				context.fillStyle = "black";
 				context.fontSize = 8;
-				context.fillText("Everything", 960, 360);
-				context.fillText("woooowoooo", 960, 440);
+				context.fillText("Everything", 960, 400);
+				context.fillText("woooowoooo", 960, 480);
 			}));
-			objects.set("return", new TextButton(960, 960, "Return", stateMachine.toMenu, 640));
+			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
 		},
 		onGame() {
