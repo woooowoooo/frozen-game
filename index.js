@@ -1,8 +1,15 @@
+// Canvas
 const canvas = document.getElementById("game");
 canvas.width = 1920;
 canvas.height = 1280;
 const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = false;
+// Colors
+const colors = {
+	button: "hsl(0, 0%, 80%)",
+	buttonShadow: "hsl(0, 0%, 60%)",
+	text: "black"
+};
 // Variables
 const mouse = {
 	x: 0,
@@ -141,12 +148,12 @@ export class TextButton extends Button {
 		hitbox.rect(x - width / 2, y, width, 128);
 		hitbox.closePath();
 		function draw() {
-			context.fillStyle = "hsl(0, 0%, 80%)";
+			context.fillStyle = colors.button;
 			context.fill(hitbox);
-			context.fillStyle = "hsl(0, 0%, 60%)";
+			context.fillStyle = colors.buttonShadow;
 			context.fillRect(x - width / 2, y + 112, width, 16);
 			context.fontSize = 8;
-			context.fillStyle = "black";
+			context.fillStyle = colors.text;
 			context.fillText(text, x, y + 88);
 		}
 		super(hitbox, draw, callback);
@@ -271,4 +278,4 @@ export class TextInput extends Button {
 		self = this;
 	}
 }
-export {canvas, context, images, sounds, stateMachines, objects, settings};
+export {canvas, context, colors, images, sounds, stateMachines, objects, settings};
