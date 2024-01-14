@@ -6,8 +6,10 @@ const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = false;
 // Colors
 const colors = {
-	button: "hsl(0, 0%, 80%)",
-	buttonShadow: "hsl(0, 0%, 60%)",
+	accent: "hsl(30, 90%, 55%)",
+	widget1: "hsl(0, 0%, 80%)",
+	widget2: "hsl(0, 0%, 70%)",
+	widget3: "hsl(0, 0%, 60%)",
 	text: "black"
 };
 // Variables
@@ -148,9 +150,9 @@ export class TextButton extends Button {
 		hitbox.rect(x - width / 2, y, width, 128);
 		hitbox.closePath();
 		function draw() {
-			context.fillStyle = colors.button;
+			context.fillStyle = colors.widget1;
 			context.fill(hitbox);
-			context.fillStyle = colors.buttonShadow;
+			context.fillStyle = colors.widget3;
 			context.fillRect(x - width / 2, y + 112, width, 16);
 			context.fontSize = 8;
 			context.fillStyle = colors.text;
@@ -170,38 +172,39 @@ export class TextToggle extends TextButton {
 	}
 }
 export class Slider extends Drawable {
-	static BAR_THICKNESS = 8;
-	static TICK_THICKNESS = 12; // Constant but not really
-	static HEIGHT = 24;
+	static THICKNESS = 12;
+	static HEIGHT = 36;
 	constructor (x, y, width, settingName, start, end, step = 1, intValues = true, callback) {
 		function draw() {
 			// Slider bar
-			context.fillStyle = "hsl(30, 5%, 80%)";
-			context.fillRect(x, y - Slider.BAR_THICKNESS / 2, width, Slider.BAR_THICKNESS);
+			context.fillStyle = colors.widget2;
+			context.fillRect(x - width / 2, y - Slider.THICKNESS / 3, width, Slider.THICKNESS * 2 / 3);
 			// Tick marks
 			const divisions = (end - start) / step;
-			for (let i = 1; i < divisions; i++) {
-				context.fillRect(x + i * width / divisions - Slider.TICK_THICKNESS / 2, y - Slider.HEIGHT / 2, Slider.TICK_THICKNESS, Slider.HEIGHT);
+			for (let i = 0; i <= divisions; i++) {
+				context.fillRect(x - width / 2 + i * width / divisions - Slider.THICKNESS / 2, y - Slider.HEIGHT / 3, Slider.THICKNESS, Slider.HEIGHT * 2 / 3);
 			}
 			// End ticks
-			context.fillStyle = "white";
-			context.fillRect(x - Slider.TICK_THICKNESS * 3 / 4, y - Slider.HEIGHT * 3 / 4, Slider.TICK_THICKNESS * 3 / 2, Slider.HEIGHT * 3 / 2);
-			context.fillRect(x + width - Slider.TICK_THICKNESS * 3 / 4, y - Slider.HEIGHT * 3 / 4, Slider.TICK_THICKNESS * 3 / 2, Slider.HEIGHT * 3 / 2);
+			context.fillStyle = colors.widget3;
+			context.fillRect(x - width / 2 - Slider.THICKNESS / 2, y - Slider.HEIGHT / 2, Slider.THICKNESS, Slider.HEIGHT);
+			context.fillRect(x + width / 2 - Slider.THICKNESS / 2, y - Slider.HEIGHT / 2, Slider.THICKNESS, Slider.HEIGHT);
 			// Slider
-			const position = (settings[settingName] - start) / (end - start) * width + x;
+			context.fillStyle = colors.accent;
+			const position = (settings[settingName] - start) / (end - start) * width + x - width / 2;
 			context.fillRect(position - 20, y - 32, 40, 64);
 			context.fontSize = 6;
+			context.fillStyle = colors.text;
 			context.textAlign = "right";
-			context.fillText(start, x - 40, y + 20);
+			context.fillText(start, x - width / 2 - 40, y + 20);
 			context.textAlign = "left";
-			context.fillText(end, x + width + 40, y + 20);
+			context.fillText(end, x + width / 2 + 40, y + 20);
 			context.textAlign = "center";
 		}
 		super(draw);
 		// Add sliding
 		let isSliding = false;
 		const hitbox = new Path2D();
-		hitbox.rect(x - 20, y - 32, width + 40, 64);
+		hitbox.rect(x - width / 2 - 20, y - 32, width + 40, 64);
 		hitbox.closePath();
 		this.onMouseDown = e => {
 			getMousePosition(e);
@@ -213,8 +216,8 @@ export class Slider extends Drawable {
 		this.update = e => {
 			getMousePosition(e);
 			if (isSliding) {
-				const value = (mouse.x - x) / width * (end - start) + start;
-				const constrainedValue = Math.max(start, Math.min(end, value));
+				let value = (mouse.x - (x - width / 2)) / width * (end - start) + start;
+				let constrainedValue = Math.max(start, Math.min(end, value));
 				settings[settingName] = intValues ? Math.round(constrainedValue) : constrainedValue;
 				if (callback != null) {
 					callback();

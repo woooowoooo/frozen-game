@@ -95,9 +95,9 @@ const stateMachine = new StateMachine({
 			objects.set("text", new Drawable(() => {
 				context.fillStyle = "black";
 				context.textAlign = "right";
-				context.fillText("Volume:", 600, 760 + 28);
+				context.fillText("Volume:", 600, 760 + 20);
 			}));
-			objects.set("volume", new Slider(720, 760, 960, "volume", 0, 100, 10, false, () => {
+			objects.set("volume", new Slider(1200, 760, 960, "volume", 0, 100, 10, false, () => {
 				for (const sound of Object.values(sounds)) {
 					sound.volume = settings.volume / 100;
 				}
