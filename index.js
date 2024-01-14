@@ -67,8 +67,17 @@ function wrapClickEvent(callback, hitbox, checkCondition) {
 canvas.addEventListener("click", getMousePosition);
 // Loading assets
 export async function loadResources() {
-	const imageNames = ["background", "buttonStart", "buttonMiddle", "buttonEnd", "soundOff", "soundOn"]; // TODO
-	const soundNames = ["goldberg"];
+	const imageData = {
+		background: "png",
+		buttonStart: "png",
+		buttonMiddle: "png",
+		buttonEnd: "png",
+		soundOff: "png",
+		soundOn: "png"
+	};
+	const soundData = {
+		goldberg: "mp3"
+	};
 	const promises = [];
 	const initialize = function (cache, id, path, type, eventType) {
 		cache[id] = document.createElement(type);
@@ -77,11 +86,11 @@ export async function loadResources() {
 			cache[id].addEventListener(eventType, resolve, {once: true});
 		}));
 	};
-	for (const name of imageNames) {
-		initialize(images, name, `images/${name}.png`, "img", "load");
+	for (const [name, extension] of Object.entries(imageData)) {
+		initialize(images, name, `images/${name}.${extension}`, "img", "load");
 	}
-	for (const name of soundNames) {
-		initialize(sounds, name, `sounds/${name}.mp3`, "audio", "canplaythrough");
+	for (const [name, extension] of Object.entries(soundData)) {
+		initialize(sounds, name, `sounds/${name}.${extension}`, "audio", "canplaythrough");
 		sounds[name].preload = "auto";
 		sounds[name].muted = settings.muted;
 		sounds[name].volume = settings.volume / 100;
