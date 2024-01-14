@@ -32,7 +32,7 @@ const settings = new Proxy(JSON.parse(localStorage.getItem("frozenSettings")) ??
 // Helper functions
 Object.defineProperty(context, "fontSize", {
 	set: size => {
-		context.font = `${size * 10}px sans-serif`; // TODO: Update font
+		context.font = `500 ${size * 10}px Raleway, sans-serif`; // TODO: Update font
 	}
 });
 export function clear() {

@@ -39,6 +39,10 @@ a {
 p {
 	margin: 0.5em 0;
 }
+@font-face {
+	font-family: "Raleway";
+	src: url("../fonts/raleway.woff2") format("woff2");
+}
 @media (prefers-color-scheme: dark) {
 	:root {
 		--primary-color: hsl(30, 10%, 10%);
