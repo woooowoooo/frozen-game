@@ -4,7 +4,7 @@ import {
 	clear, render, loadResources,
 	Drawable, MuteButton, TextButton, Slider
 } from "./index.js";
-// import {newGame, onKeyDown, onKeyUp, update, TODOrender} from "./TODO.js";
+import {newGame, onKeyDown, onKeyUp, update, render as gameRender} from "./game.js";
 // State machine
 const stateMachine = new StateMachine({
 	init: "boot",
@@ -81,9 +81,9 @@ const stateMachine = new StateMachine({
 			objects.set("title", new Drawable(() => {
 				context.fillStyle = "black";
 				context.fontSize = 20;
-				context.fillText("Frozen Game", 960, 400);
+				context.fillText("Frozen Game", 960, 360);
 			}));
-			objects.set("start", new TextButton(960, 560, "Start", () => window.alert("Skill issue") /* stateMachine.start */, 640));
+			objects.set("start", new TextButton(960, 560, "Start", stateMachine.start, 640));
 			objects.set("settings", new TextButton(960, 720, "Settings", stateMachine.toSettings, 640));
 			objects.set("help", new TextButton(960, 880, "Help", stateMachine.toHelp, 640));
 			objects.set("credits", new TextButton(960, 1040, "Credits", stateMachine.toCredits, 640));
@@ -111,7 +111,8 @@ const stateMachine = new StateMachine({
 			objects.set("help", new Drawable(() => {
 				context.fillStyle = "black";
 				context.fontSize = 8;
-				context.fillText("Don't expect a functional game", 960, 400);
+				context.fillText("This game will eventually be a platformer.", 960, 360);
+				context.fillText("As of right now, all you can do is press Escape.", 960, 480);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
@@ -121,8 +122,8 @@ const stateMachine = new StateMachine({
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("credits", new Drawable(() => {
 				context.fillStyle = "black";
-				context.fontSize = 8;
-				context.fillText("Everything", 960, 400);
+				context.fontSize = 12;
+				context.fillText("Everything", 960, 360);
 				context.fillText("woooowoooo", 960, 480);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
@@ -130,17 +131,17 @@ const stateMachine = new StateMachine({
 		},
 		onGame() {
 			clear();
-			// newGame();
-			// window.addEventListener("keydown", onKeyDown);
-			// window.addEventListener("keyup", onKeyUp);
+			newGame();
+			window.addEventListener("keydown", onKeyDown);
+			window.addEventListener("keyup", onKeyUp);
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("mute", new MuteButton());
-			// objects.set("TODO", new Drawable(TODORender));
+			objects.set("game", new Drawable(gameRender));
 			requestAnimationFrame(loop);
 		},
-		/* onGameOver(_, text) {
-			// window.removeEventListener("keydown", onKeyDown);
-			// window.removeEventListener("keyup", onKeyUp);
+		onGameOver(_, text) {
+			window.removeEventListener("keydown", onKeyDown);
+			window.removeEventListener("keyup", onKeyUp);
 			for (const sound of Object.values(sounds).filter(sound => !sound.paused)) {
 				sound.pause();
 			}
@@ -165,7 +166,7 @@ const stateMachine = new StateMachine({
 			for (const sound of Object.values(sounds).filter(sound => sound.paused)) {
 				sound.play();
 			}
-		} */
+		}
 	}
 });
 stateMachines.main = stateMachine;
@@ -187,12 +188,12 @@ function loop(time) {
 	}
 	// Handling is done in TODO.js
 	// Update game state
-	/* const [changed, endText] = update();
+	const [changed, endText] = update();
 	if (endText != null) {
 		stateMachine.lose(endText);
 	}
-	if (changed) { // If board has updated
+	if (changed) { // If level has updated
 		render();
-	} */
+	}
 	requestAnimationFrame(loop);
 }
