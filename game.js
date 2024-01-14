@@ -2,7 +2,7 @@ import StateMachine from "./state-machine/module.js";
 import {
 	canvas, context, images, sounds, stateMachines, objects, settings,
 	clear, render, loadResources,
-	Drawable, MuteButton, TextButton, TextToggle, Slider, TextInput
+	Drawable, MuteButton, TextButton, Slider
 } from "./index.js";
 // import {newGame, onKeyDown, onKeyUp, update, TODOrender} from "./TODO.js";
 // State machine
@@ -83,10 +83,10 @@ const stateMachine = new StateMachine({
 				context.fontSize = 20;
 				context.fillText("Frozen Game", 960, 400);
 			}));
-			objects.set("game", new TextButton(560, 640, "Game", () => window.alert("Skill issue") /* stateMachine.start */, 640));
-			objects.set("settings", new TextButton(560, 800, "Settings", stateMachine.toSettings, 640));
-			objects.set("help", new TextButton(560, 960, "Help", stateMachine.toHelp, 640));
-			objects.set("credits", new TextButton(1360, 960, "Credits", stateMachine.toCredits, 640));
+			objects.set("start", new TextButton(960, 560, "Start", () => window.alert("Skill issue") /* stateMachine.start */, 640));
+			objects.set("settings", new TextButton(960, 720, "Settings", stateMachine.toSettings, 640));
+			objects.set("help", new TextButton(960, 880, "Help", stateMachine.toHelp, 640));
+			objects.set("credits", new TextButton(960, 1040, "Credits", stateMachine.toCredits, 640));
 			objects.set("mute", new MuteButton());
 		},
 		onSettings() {
