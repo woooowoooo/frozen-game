@@ -14,6 +14,7 @@ const stateMachines = {
 	main: null
 };
 const objects = new Map();
+// Settings
 const defaultSettings = {
 	muted: false,
 	volume: 100
@@ -68,7 +69,7 @@ canvas.addEventListener("click", getMousePosition);
 // Loading assets
 export async function loadResources() {
 	const imageData = {
-		background: "png",
+		background: "svg",
 		buttonStart: "png",
 		buttonMiddle: "png",
 		buttonEnd: "png",
