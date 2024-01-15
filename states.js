@@ -1,6 +1,6 @@
 import StateMachine from "./state-machine/module.js";
 import {
-	canvas, context, images, sounds, stateMachines, objects, settings,
+	canvas, context, colors, images, sounds, stateMachines, objects, settings,
 	clear, render, loadResources,
 	Drawable, MuteButton, TextButton, Slider
 } from "./index.js";
@@ -79,7 +79,7 @@ const stateMachine = new StateMachine({
 			sounds.goldberg.play();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("title", new Drawable(() => {
-				context.fillStyle = "black";
+				context.fillStyle = colors.text;
 				context.fontSize = 20;
 				context.fillText("Frozen Game", 960, 360);
 			}));
@@ -93,7 +93,7 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("text", new Drawable(() => {
-				context.fillStyle = "black";
+				context.fillStyle = colors.text;
 				context.textAlign = "right";
 				context.fillText("Volume:", 600, 640 + 20);
 			}));
@@ -109,10 +109,11 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("help", new Drawable(() => {
-				context.fillStyle = "black";
+				context.fillStyle = colors.text;
 				context.fontSize = 8;
 				context.fillText("This game will eventually be a platformer.", 960, 360);
-				context.fillText("As of right now, all you can do is press Escape.", 960, 480);
+				context.fillText("Left and right arrows move left and right.", 960, 480);
+				context.fillText("Press R to restart and ESC to exit.", 960, 600);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
@@ -121,7 +122,7 @@ const stateMachine = new StateMachine({
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("credits", new Drawable(() => {
-				context.fillStyle = "black";
+				context.fillStyle = colors.text;
 				context.fontSize = 12;
 				context.fillText("Everything", 960, 360);
 				context.fillText("woooowoooo", 960, 480);
