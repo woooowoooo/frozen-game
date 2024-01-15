@@ -1,4 +1,4 @@
-import {context, colors, objects, settings, Drawable} from "./index.js";
+import {context, colors, levels, objects, settings, Drawable} from "./index.js";
 // Constants
 const GRAVITY = 100; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
@@ -14,6 +14,8 @@ export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighS
 });
 const heldKeys = new Set();
 let character = null;
+let level = null;
+let levelNumber = 1;
 let endGameText = null;
 let changed = true;
 // Scoring
@@ -56,6 +58,8 @@ class Character extends Drawable {
 export function newGame() {
 	heldKeys.clear();
 	character = new Character(600, 600);
+	levelNumber = 1;
+	level = levels[levelNumber - 1];
 	endGameText = null;
 	changed = true;
 	// Scoring
