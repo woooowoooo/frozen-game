@@ -89,7 +89,7 @@ export async function loadResources() {
 	const soundData = {
 		goldberg: "mp3"
 	};
-	const levelNames = ["level1"];
+	const levelAmount = 2;
 	const promises = [];
 	const initialize = function (cache, id, path, type, eventType) {
 		cache[id] = document.createElement(type);
@@ -107,13 +107,13 @@ export async function loadResources() {
 		sounds[name].muted = settings.muted;
 		sounds[name].volume = settings.volume / 100;
 	}
-	for (const name of levelNames) {
+	for (let i = 1; i <= levelAmount; i++) {
 		promises.push(new Promise(async resolve => { // "Inline" SVG for hitbox
-			const levelFile = await window.fetch(`levels/${name}.svg`).then(response => response.text());
-			levels[name] = (new DOMParser()).parseFromString(levelFile, "image/svg+xml");
+			const levelFile = await window.fetch(`levels/level${i}.svg`).then(response => response.text());
+			levels[`level${i}`] = (new DOMParser()).parseFromString(levelFile, "image/svg+xml");
 			resolve();
 		}));
-		initialize(images, name, `levels/${name}.svg`, "img", "load"); // Image element for graphical rendering
+		initialize(images, `level${i}`, `levels/level${i}.svg`, "img", "load"); // Image element for graphical rendering
 	}
 	return Promise.all(promises);
 }

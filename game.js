@@ -66,8 +66,7 @@ export function newGame() {
 	endGameText = null;
 	changed = true;
 	// Level
-	levelNumber = 1;
-	initLevel(levelNumber);
+	initLevel(1);
 	// Scoring
 	startTime = window.performance.now();
 	time = 0;
@@ -85,6 +84,11 @@ function endGame(win) {
 }
 // Game mechanics
 function initLevel(number) {
+	if (levels[`level${number}`] == null) {
+		endGame(true);
+		return;
+	}
+	levelNumber = number;
 	level = levels[`level${number}`];
 	const pathText = level.getElementById("hitbox").getAttribute("d");
 	hitbox = new Path2D(pathText);
@@ -101,7 +105,7 @@ export function onKeyUp(e) {
 }
 export function handle({key}) {
 	if (key === "Escape") {
-		endGame(true);
+		endGame(false);
 		heldKeys.clear();
 	} else if (key === "r" || key === "R") {
 		newGame();
@@ -123,6 +127,11 @@ export function update(deltaTime) {
 	}
 	// Update game state
 	character.update(deltaTime);
+	// New level
+	if (character.center.x > 1920) {
+		character.center.x = 0;
+		initLevel(levelNumber + 1);
+	}
 	return [changed, endGameText];
 }
 export function render() {
