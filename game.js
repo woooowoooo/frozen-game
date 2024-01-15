@@ -29,7 +29,7 @@ class Character extends Drawable {
 		changed = true;
 		function draw() {
 			context.fillStyle = colors.character;
-			context.fillRect(this.center.x, this.center.y, 100, 100);
+			context.fillRect(this.center.x - 50, this.center.y - 50, 100, 100);
 		}
 		super(draw);
 		this.center = {x, y};
@@ -47,13 +47,14 @@ class Character extends Drawable {
 		this.rotation = (this.rotation + offset) % 360;
 	}
 	update(deltaTime) {
-		if (context.isPointInPath(hitbox, this.center.x, this.center.y)) {
-			this.speed.x = 0;
-			this.speed.y = 0;
-			return;
-		}
-		changed = true;
 		this.speed.y += GRAVITY * deltaTime; // Gravity
+		if (context.isPointInPath(hitbox, this.center.x, this.center.y + 50)) {
+			this.center.y -= this.speed.y * deltaTime;
+			this.speed.y = 0;
+		}
+		if (this.speed.x !== 0 || this.speed.y !== 0) {
+			changed = true;
+		}
 		this.center.x += this.speed.x * deltaTime;
 		this.center.y += this.speed.y * deltaTime;
 	}
