@@ -1,7 +1,8 @@
 import {context, colors, objects, settings, Drawable} from "./index.js";
 // Constants
-const SENSITIVITY = 1000; // Pixels per second per second
-const MAX_SPEED = 500; // Pixels per second
+const GRAVITY = 100; // px / sec^2
+const SENSITIVITY = 1000; // px / sec^2
+const MAX_SPEED = 500; // px / sec
 // State variables
 export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighScores")) ?? {}, {
 	set: function (target, property, value) {
@@ -23,14 +24,16 @@ class Character extends Drawable {
 	constructor (x, y, rotation) {
 		changed = true;
 		function draw() {
-			context.fillRect(this.x, this.y, 100, 100);
 			context.fillStyle = colors.character;
+			context.fillRect(this.center.x, this.center.y, 100, 100);
 		}
 		super(draw);
-		this.x = x ?? 0;
-		this.y = y ?? 0;
+		this.center = {x, y};
 		this.rotation = rotation ?? 0;
-		this.speed = 0;
+		this.speed = {
+			x: 0,
+			y: 0
+		};
 	}
 	rotate(offset) {
 		if (false /* collisionCheck(this) */) {
@@ -39,12 +42,14 @@ class Character extends Drawable {
 		changed = true;
 		this.rotation = (this.rotation + offset) % 360;
 	}
-	translate(offset) {
+	update(deltaTime) {
 		if (false /* collisionCheck(this) */) {
 			return;
 		}
 		changed = true;
-		this.x += offset;
+		this.speed.y += GRAVITY * deltaTime; // Gravity
+		this.center.x += this.speed.x * deltaTime;
+		this.center.y += this.speed.y * deltaTime;
 	}
 }
 // New game
@@ -91,16 +96,17 @@ export function handle({key}) {
 	}
 }
 export function update(deltaTime) {
+	deltaTime /= 1000; // Convert to seconds
 	time = window.performance.now() - startTime;
 	// Handle held keys
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
 		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;
-		if (Math.abs(character.speed + direction * SENSITIVITY * (deltaTime / 1000)) < MAX_SPEED) {
-			character.speed += direction * SENSITIVITY * (deltaTime / 1000);
+		if (Math.abs(character.speed.x + direction * SENSITIVITY * deltaTime) < MAX_SPEED) {
+			character.speed.x += direction * SENSITIVITY * deltaTime;
 		}
 	}
 	// Update game state
-	character.translate(character.speed * deltaTime / 1000);
+	character.update(deltaTime);
 	return [changed, endGameText];
 }
 export function render() {
