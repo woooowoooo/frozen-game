@@ -1,6 +1,7 @@
 import {context, objects, settings, Drawable} from "./index.js";
 // Constants
-const MAX_SPEED = 500;
+const SENSITIVITY = 1000; // Pixels per second per second
+const MAX_SPEED = 500; // Pixels per second
 // State variables
 export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighScores")) ?? {}, {
 	set: function (target, property, value) {
@@ -29,7 +30,7 @@ class Character extends Drawable {
 		this.x = x ?? 0;
 		this.y = y ?? 0;
 		this.rotation = rotation ?? 0;
-		this.speed = 0; // Pixels per second
+		this.speed = 0;
 	}
 	rotate(offset) {
 		if (false /* collisionCheck(this) */) {
@@ -94,8 +95,8 @@ export function update(deltaTime) {
 	// Handle held keys
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
 		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;
-		if (Math.abs(character.speed + direction * 50) < MAX_SPEED) {
-			character.speed += direction * 50;
+		if (Math.abs(character.speed + direction * SENSITIVITY * (deltaTime / 1000)) < MAX_SPEED) {
+			character.speed += direction * SENSITIVITY * (deltaTime / 1000);
 		}
 	}
 	// Update game state
