@@ -10,19 +10,17 @@ export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighS
 		return valid;
 	}
 });
-export const game = {
-	changed: true
-};
 const heldKeys = new Set();
 let character = null;
 let endGameText = null;
+let changed = true;
 // Scoring
 let startTime = 0;
 let time = 0;
 // Character class
 class Character extends Drawable {
 	constructor (x, y, rotation) {
-		game.changed = true;
+		changed = true;
 		function draw() {
 			context.fillStyle = "white";
 			context.fillRect(this.x, this.y, 100, 100);
@@ -37,14 +35,14 @@ class Character extends Drawable {
 		if (false /* collisionCheck(this) */) {
 			return;
 		}
-		game.changed = true;
+		changed = true;
 		this.rotation = (this.rotation + offset) % 360;
 	}
 	translate(offset) {
 		if (false /* collisionCheck(this) */) {
 			return;
 		}
-		game.changed = true;
+		changed = true;
 		this.x += offset;
 	}
 }
@@ -53,7 +51,7 @@ export function newGame() {
 	heldKeys.clear();
 	character = new Character(600, 600);
 	endGameText = null;
-	game.changed = true;
+	changed = true;
 	// Scoring
 	startTime = window.performance.now();
 	time = 0;
@@ -102,8 +100,8 @@ export function update(deltaTime) {
 	}
 	// Update game state
 	character.translate(character.speed * deltaTime / 1000);
-	return [game.changed, endGameText];
+	return [changed, endGameText];
 }
 export function render() {
-	game.changed = false;
+	changed = false;
 }
