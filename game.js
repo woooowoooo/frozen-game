@@ -1,4 +1,4 @@
-import {context, colors, levels, objects, settings, Drawable} from "./index.js";
+import {context, colors, images, sounds, levels, objects, settings, Drawable} from "./index.js";
 // Constants
 const GRAVITY = 100; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
@@ -59,13 +59,14 @@ export function newGame() {
 	heldKeys.clear();
 	character = new Character(600, 600);
 	levelNumber = 1;
-	level = levels[levelNumber - 1];
+	level = levels[`level${levelNumber}`];
 	endGameText = null;
 	changed = true;
 	// Scoring
 	startTime = window.performance.now();
 	time = 0;
 	// Objects
+	objects.set("background", new Drawable(() => context.drawImage(images[`level${levelNumber}`], 0, 0, 1920, 1280))); // Replaces placeholder background
 	objects.set("character", character);
 }
 function endGame(win) {

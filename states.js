@@ -133,7 +133,7 @@ const stateMachine = new StateMachine({
 			clear();
 			window.addEventListener("keydown", onKeyDown);
 			window.addEventListener("keyup", onKeyUp);
-			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280))); // Placeholder, replaced in game
 			objects.set("mute", new MuteButton());
 			objects.set("game", new Drawable(gameRender));
 			newGame();
