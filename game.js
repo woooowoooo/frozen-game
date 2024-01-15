@@ -1,4 +1,4 @@
-import {settings} from "./index.js";
+import {context, objects, settings, Drawable} from "./index.js";
 // Constants
 const MAX_SPEED = 20;
 // State variables
@@ -21,20 +21,17 @@ let speed = 0;
 let startTime = 0;
 let time = 0;
 // Character class
-class Character {
+class Character extends Drawable {
 	constructor (x, y, rotation) {
 		game.changed = true;
+		function draw() {
+			context.fillStyle = "white";
+			context.fillRect(this.x, this.y, 100, 100);
+		}
+		super(draw);
 		this.x = x ?? 0;
 		this.y = y ?? 0;
 		this.rotation = rotation ?? 0;
-		this.fill();
-	}
-	clear() {
-		this.fill();
-	}
-	fill() {
-		// TODO
-	}
 	rotate(dr) {
 		this.rotation = (this.rotation + dr) % 360;
 	}
@@ -54,12 +51,14 @@ class Character {
 // New game
 export function newGame() {
 	heldKeys.clear();
-	character = new Character();
+	character = new Character(600, 600);
 	endGameText = null;
 	game.changed = true;
 	// Scoring
 	startTime = window.performance.now();
 	time = 0;
+	// Objects
+	objects.set("character", character);
 }
 function endGame(win) {
 	if (!win) {
@@ -107,4 +106,5 @@ export function update() {
 	return [game.changed, endGameText];
 }
 export function render() {
+	game.changed = false;
 }

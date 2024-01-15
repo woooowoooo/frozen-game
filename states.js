@@ -131,12 +131,12 @@ const stateMachine = new StateMachine({
 		},
 		onGame() {
 			clear();
-			newGame();
 			window.addEventListener("keydown", onKeyDown);
 			window.addEventListener("keyup", onKeyUp);
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("mute", new MuteButton());
 			objects.set("game", new Drawable(gameRender));
+			newGame();
 			requestAnimationFrame(loop);
 		},
 		onGameOver(_, text) {
