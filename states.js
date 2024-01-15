@@ -137,6 +137,7 @@ const stateMachine = new StateMachine({
 			objects.set("mute", new MuteButton());
 			objects.set("game", new Drawable(gameRender));
 			newGame();
+			lastTime = window.performance.now();
 			requestAnimationFrame(loop);
 		},
 		onGameOver(_, text) {
