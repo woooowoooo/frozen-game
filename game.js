@@ -1,6 +1,6 @@
 import {context, objects, settings, Drawable} from "./index.js";
 // Constants
-const MAX_SPEED = 20;
+const MAX_SPEED = 500;
 // State variables
 export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighScores")) ?? {}, {
 	set: function (target, property, value) {
@@ -16,7 +16,6 @@ export const game = {
 const heldKeys = new Set();
 let character = null;
 let endGameText = null;
-let speed = 0;
 // Scoring
 let startTime = 0;
 let time = 0;
@@ -32,20 +31,21 @@ class Character extends Drawable {
 		this.x = x ?? 0;
 		this.y = y ?? 0;
 		this.rotation = rotation ?? 0;
-	rotate(dr) {
-		this.rotation = (this.rotation + dr) % 360;
+		this.speed = 0; // Pixels per second
 	}
-	translate(dx) {
-		this.x + dx;
-	}
-	update(offset, rOffset = 0) {
+	rotate(offset) {
 		if (false /* collisionCheck(this) */) {
-			return false;
+			return;
 		}
 		game.changed = true;
-		this.translate(offset);
-		this.rotate(rOffset);
-		return true;
+		this.rotation = (this.rotation + offset) % 360;
+	}
+	translate(offset) {
+		if (false /* collisionCheck(this) */) {
+			return;
+		}
+		game.changed = true;
+		this.x += offset;
 	}
 }
 // New game
@@ -91,18 +91,17 @@ export function handle({key}) {
 		character.rotate(-1); // Counterclockwise
 	}
 }
-export function update() {
+export function update(deltaTime) {
 	time = window.performance.now() - startTime;
 	// Handle held keys
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
-		if (Math.abs(speed) < MAX_SPEED) {
-			character.update(heldKeys.has("ArrowLeft") ? -1 : 1);
+		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;
+		if (Math.abs(character.speed + direction * 50) < MAX_SPEED) {
+			character.speed += direction * 50;
 		}
-		speed++;
-	} else {
-		speed = 0;
 	}
-	// Update board
+	// Update game state
+	character.translate(character.speed * deltaTime / 1000);
 	return [game.changed, endGameText];
 }
 export function render() {

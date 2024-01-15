@@ -175,20 +175,19 @@ const FPS = 60;
 const FRAME_TIME = 1000 / FPS;
 let lastTime = window.performance.now();
 function loop(time) {
+	const deltaTime = time - lastTime;
 	// Lock to 60 fps
-	if (time - lastTime < FRAME_TIME) {
+	if (deltaTime < FRAME_TIME) {
 		requestAnimationFrame(loop);
 		return;
 	}
 	lastTime = time - (time % FRAME_TIME);
-	frames++;
 	// Break on game loss
 	if (!stateMachine.is("game")) {
 		return;
 	}
-	// Handling is done in TODO.js
-	// Update game state
-	const [changed, endText] = update();
+	// Game loop (handling is done in game.js)
+	const [changed, endText] = update(deltaTime);
 	if (endText != null) {
 		stateMachine.lose(endText);
 	}
