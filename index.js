@@ -6,6 +6,9 @@ const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = false;
 // Colors
 const colors = {
+	background1: "hsl(220, 25%, 90%)",
+	background2: "hsl(210, 15%, 75%)",
+	character: "hsl(210, 65%, 85%)",
 	accent: "hsl(30, 90%, 55%)",
 	widget1: "hsl(0, 0%, 80%)",
 	widget2: "hsl(0, 0%, 70%)",

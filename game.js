@@ -1,4 +1,4 @@
-import {context, objects, settings, Drawable} from "./index.js";
+import {context, colors, objects, settings, Drawable} from "./index.js";
 // Constants
 const SENSITIVITY = 1000; // Pixels per second per second
 const MAX_SPEED = 500; // Pixels per second
@@ -23,8 +23,8 @@ class Character extends Drawable {
 	constructor (x, y, rotation) {
 		changed = true;
 		function draw() {
-			context.fillStyle = "white";
 			context.fillRect(this.x, this.y, 100, 100);
+			context.fillStyle = colors.character;
 		}
 		super(draw);
 		this.x = x ?? 0;
