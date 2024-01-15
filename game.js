@@ -14,10 +14,12 @@ export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighS
 });
 const heldKeys = new Set();
 let character = null;
-let level = null;
-let levelNumber = 1;
 let endGameText = null;
 let changed = true;
+// Level variables
+let levelNumber = 1;
+let level = null;
+let hitbox = null;
 // Scoring
 let startTime = 0;
 let time = 0;
@@ -45,7 +47,9 @@ class Character extends Drawable {
 		this.rotation = (this.rotation + offset) % 360;
 	}
 	update(deltaTime) {
-		if (false /* collisionCheck(this) */) {
+		if (context.isPointInPath(hitbox, this.center.x, this.center.y)) {
+			this.speed.x = 0;
+			this.speed.y = 0;
 			return;
 		}
 		changed = true;
@@ -58,14 +62,15 @@ class Character extends Drawable {
 export function newGame() {
 	heldKeys.clear();
 	character = new Character(600, 600);
-	levelNumber = 1;
-	level = levels[`level${levelNumber}`];
 	endGameText = null;
 	changed = true;
+	// Level
+	levelNumber = 1;
+	initLevel(levelNumber);
 	// Scoring
 	startTime = window.performance.now();
 	time = 0;
-	// Objects
+	// Add objects
 	objects.set("background", new Drawable(() => context.drawImage(images[`level${levelNumber}`], 0, 0, 1920, 1280))); // Replaces placeholder background
 	objects.set("character", character);
 }
@@ -78,6 +83,11 @@ function endGame(win) {
 	endGameText = [`Time: ${time / 1000} seconds`, `Fastest Time: ${highScores.time / 1000} seconds`];
 }
 // Game mechanics
+function initLevel(number) {
+	level = levels[`level${number}`];
+	const pathText = level.getElementById("hitbox").getAttribute("d");
+	hitbox = new Path2D(pathText);
+}
 // Game loop
 export function onKeyDown(e) {
 	if (!heldKeys.has(e.key)) { // Prevent held key spam

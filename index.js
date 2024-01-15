@@ -108,10 +108,11 @@ export async function loadResources() {
 		sounds[name].volume = settings.volume / 100;
 	}
 	for (const name of levelNames) {
-		promises.push(async () => { // "Inline" SVG for hitbox
+		promises.push(new Promise(async resolve => { // "Inline" SVG for hitbox
 			const levelFile = await window.fetch(`levels/${name}.svg`).then(response => response.text());
 			levels[name] = (new DOMParser()).parseFromString(levelFile, "image/svg+xml");
-		});
+			resolve();
+		}));
 		initialize(images, name, `levels/${name}.svg`, "img", "load"); // Image element for graphical rendering
 	}
 	return Promise.all(promises);
