@@ -90,7 +90,7 @@ export async function loadResources() {
 	const soundData = {
 		goldberg: "mp3"
 	};
-	const levelAmount = 2;
+	const levelAmount = 3;
 	const promises = [];
 	const initialize = function (cache, id, path, type, eventType) {
 		cache[id] = document.createElement(type);
