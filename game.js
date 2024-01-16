@@ -45,7 +45,7 @@ class Character extends Drawable {
 		};
 	}
 	rotate(offset) {
-		if (false /* collisionCheck(this) */) {
+		if (collisionCheck()) {
 			return;
 		}
 		changed = true;
@@ -53,8 +53,10 @@ class Character extends Drawable {
 	}
 	update(deltaTime) {
 		this.speed.y += GRAVITY * deltaTime; // Gravity
-		if (context.isPointInPath(hitbox, this.center.x, this.center.y + 50)) {
-			this.center.y -= this.speed.y * deltaTime;
+		if (collisionCheck()) {
+			while (collisionCheck()) {
+				this.center.y -= 1;
+			}
 			this.speed.y = 0;
 		}
 		if (this.speed.x !== 0 || this.speed.y !== 0) {
@@ -119,6 +121,13 @@ function endGame(win) {
 	endGameText = [`Time: ${time / 1000} seconds`, `Fastest Time: ${highScores.time / 1000} seconds`];
 }
 // Game mechanics
+function collisionCheck() {
+	let result = context.isPointInPath(hitbox, character.center.x + 50, character.center.y + 50);
+	result ||= context.isPointInPath(hitbox, character.center.x - 50, character.center.y + 50);
+	result ||= context.isPointInPath(hitbox, character.center.x + 50, character.center.y - 50);
+	result ||= context.isPointInPath(hitbox, character.center.x - 50, character.center.y - 50);
+	return result;
+}
 // Game loop
 export function onKeyDown(e) {
 	if (!heldKeys.has(e.key)) { // Prevent held key spam
