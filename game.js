@@ -163,8 +163,12 @@ export function update(deltaTime) {
 	}
 	// Update game state
 	character.update(deltaTime);
+	// Restart upon fall
+	if (character.center.y - 50 > 1280) {
+		newGame();
+	}
 	// New level
-	if (character.center.x > 1920) {
+	if (character.center.x - 50 > 1920) {
 		newLevel(levelNumber + 1);
 	}
 	return [changed, endGameText];
