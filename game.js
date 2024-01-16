@@ -3,6 +3,7 @@ import {context, colors, images, sounds, levels, objects, settings, Drawable} fr
 const GRAVITY = 200; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 500; // px / sec
+const RADIUS = 50;
 // Rendering constants
 const DEBUG_X = 140;
 const DEBUG_Y = 1260;
@@ -34,7 +35,7 @@ class Character extends Drawable {
 		changed = true;
 		function draw() {
 			context.fillStyle = colors.character;
-			context.fillRect(this.center.x - 50, this.center.y - 50, 100, 100);
+			context.fillRect(this.center.x - RADIUS, this.center.y - RADIUS, RADIUS * 2, RADIUS * 2);
 		}
 		super(draw);
 		this.center = {x, y};
@@ -122,10 +123,10 @@ function endGame(win) {
 }
 // Game mechanics
 function collisionCheck() {
-	let result = context.isPointInPath(hitbox, character.center.x + 50, character.center.y + 50);
-	result ||= context.isPointInPath(hitbox, character.center.x - 50, character.center.y + 50);
-	result ||= context.isPointInPath(hitbox, character.center.x + 50, character.center.y - 50);
-	result ||= context.isPointInPath(hitbox, character.center.x - 50, character.center.y - 50);
+	let result = context.isPointInPath(hitbox, character.center.x + RADIUS, character.center.y + RADIUS);
+	result ||= context.isPointInPath(hitbox, character.center.x - RADIUS, character.center.y + RADIUS);
+	result ||= context.isPointInPath(hitbox, character.center.x + RADIUS, character.center.y - RADIUS);
+	result ||= context.isPointInPath(hitbox, character.center.x - RADIUS, character.center.y - RADIUS);
 	return result;
 }
 // Game loop
@@ -164,11 +165,11 @@ export function update(deltaTime) {
 	// Update game state
 	character.update(deltaTime);
 	// Restart upon fall
-	if (character.center.y - 50 > 1280) {
+	if (character.center.y - RADIUS > 1280) {
 		newGame();
 	}
 	// New level
-	if (character.center.x - 50 > 1920) {
+	if (character.center.x - RADIUS > 1920) {
 		newLevel(levelNumber + 1);
 	}
 	return [changed, endGameText];
