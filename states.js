@@ -2,7 +2,7 @@ import StateMachine from "./state-machine/module.js";
 import {
 	canvas, context, colors, images, sounds, stateMachines, objects, settings,
 	clear, render, loadResources,
-	Drawable, MuteButton, TextButton, Slider
+	Drawable, MuteButton, TextButton, TextToggle, Slider
 } from "./index.js";
 import {newGame, onKeyDown, onKeyUp, update, render as gameRender} from "./game.js";
 // State machine
@@ -95,9 +95,11 @@ const stateMachine = new StateMachine({
 			objects.set("text", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.textAlign = "right";
-				context.fillText("Volume:", 600, 640 + 20);
+				context.fillText("Debug:", 600, 240 + 88);
+				context.fillText("Volume:", 600, 480 + 20);
 			}));
-			objects.set("volume", new Slider(1200, 640, 960, "volume", 0, 100, 10, false, () => {
+			objects.set("debug", new TextToggle(1200, 240, "debug"));
+			objects.set("volume", new Slider(1200, 480, 960, "volume", 0, 100, 10, false, () => {
 				for (const sound of Object.values(sounds)) {
 					sound.volume = settings.volume / 100;
 				}
@@ -111,9 +113,9 @@ const stateMachine = new StateMachine({
 			objects.set("help", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.fontSize = 8;
-				context.fillText("This game will eventually be a platformer.", 960, 360);
-				context.fillText("Left and right arrows move left and right.", 960, 480);
-				context.fillText("Press R to restart and ESC to exit.", 960, 600);
+				context.fillText("This game will eventually be a platformer.", 960, 280);
+				context.fillText("Left and right arrows move left and right.", 960, 400);
+				context.fillText("Press R to restart and ESC to exit.", 960, 520);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
@@ -124,8 +126,9 @@ const stateMachine = new StateMachine({
 			objects.set("credits", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.fontSize = 12;
-				context.fillText("Everything", 960, 360);
-				context.fillText("woooowoooo", 960, 480);
+				context.fillText("Everything", 960, 320);
+				context.fontSize = 8;
+				context.fillText("woooowoooo", 960, 440);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());

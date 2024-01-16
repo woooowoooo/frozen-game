@@ -3,6 +3,10 @@ import {context, colors, images, sounds, levels, objects, settings, Drawable} fr
 const GRAVITY = 100; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 500; // px / sec
+// Rendering constants
+const DEBUG_X = 140;
+const DEBUG_Y = 1260;
+const DEBUG_LINE_HEIGHT = 40;
 // State variables
 export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighScores")) ?? {}, {
 	set: function (target, property, value) {
@@ -20,9 +24,10 @@ let changed = true;
 let levelNumber = 1;
 let level = null;
 let hitbox = null;
-// Scoring
+// Time variables
 let startTime = 0;
 let time = 0;
+let fps = 0;
 // Character class
 class Character extends Drawable {
 	constructor (x, y, rotation) {
@@ -67,12 +72,32 @@ export function newGame() {
 	changed = true;
 	// Level
 	initLevel(1);
-	// Scoring
+	// Time
 	startTime = window.performance.now();
 	time = 0;
+	fps = 0;
 	// Add objects
 	objects.set("background", new Drawable(() => context.drawImage(images[`level${levelNumber}`], 0, 0, 1920, 1280))); // Replaces placeholder background
 	objects.set("character", character);
+	if (settings.debug) {
+		objects.set("debug", new Drawable(() => {
+			changed = true;
+			context.fillStyle = colors.text;
+			context.fontSize = 4;
+			const texts = {
+				FPS: `${fps.toFixed(2)} (may not be accurate)`,
+				Time: `${time / 1000} seconds`
+			};
+			let textY = DEBUG_Y - (Object.keys(texts).length - 1) * DEBUG_LINE_HEIGHT;
+			for (const [key, value] of Object.entries(texts)) {
+				context.textAlign = "right";
+				context.fillText(`${key}: `, DEBUG_X, textY);
+				context.textAlign = "left";
+				context.fillText(value, DEBUG_X, textY);
+				textY += DEBUG_LINE_HEIGHT;
+			}
+		}));
+	}
 }
 function endGame(win) {
 	if (!win) {
@@ -118,6 +143,7 @@ export function handle({key}) {
 export function update(deltaTime) {
 	deltaTime /= 1000; // Convert to seconds
 	time = window.performance.now() - startTime;
+	fps = 1 / deltaTime;
 	// Handle held keys
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
 		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;

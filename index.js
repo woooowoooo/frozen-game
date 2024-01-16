@@ -29,6 +29,7 @@ const stateMachines = {
 const objects = new Map();
 // Settings
 const defaultSettings = {
+	debug: false,
 	muted: false,
 	volume: 100
 };
@@ -166,8 +167,9 @@ export class TextButton extends Button {
 			context.fill(hitbox);
 			context.fillStyle = colors.widget3;
 			context.fillRect(x - width / 2, y + 112, width, 16);
-			context.fontSize = 8;
 			context.fillStyle = colors.text;
+			context.fontSize = 8;
+			context.textAlign = "center";
 			context.fillText(text, x, y + 88);
 		}
 		super(hitbox, draw, callback);
