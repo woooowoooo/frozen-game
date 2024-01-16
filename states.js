@@ -1,7 +1,7 @@
 import StateMachine from "./state-machine/module.js";
 import {
 	canvas, context, colors, images, sounds, stateMachines, objects, settings,
-	clear, render, loadResources,
+	clear, clearSounds, render, loadResources,
 	Drawable, MuteButton, TextButton, TextToggle, Slider
 } from "./index.js";
 import {newGame, onKeyDown, onKeyUp, update, render as gameRender} from "./game.js";
@@ -76,7 +76,7 @@ const stateMachine = new StateMachine({
 		},
 		onMenu() {
 			clear();
-			sounds.goldberg.play();
+			sounds.goldbergAria.play();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("title", new Drawable(() => {
 				context.fillStyle = colors.text;
@@ -133,7 +133,7 @@ const stateMachine = new StateMachine({
 				context.fillText("Music", 560, 560);
 				context.fillText("Font", 1360, 560);
 				context.fontSize = 6;
-				context.fillText("Goldberg Variations: Aria", 560, 640);
+				context.fillText("Goldberg Variations: Aria, Var. 1", 560, 640);
 				context.fillText("Raleway", 1360, 640);
 				context.fontSize = 4;
 				context.fillText("Johann Sebastian Bach", 560, 700);
@@ -145,6 +145,8 @@ const stateMachine = new StateMachine({
 		},
 		onGame() {
 			clear();
+			clearSounds();
+			sounds.goldbergVar1.play();
 			window.addEventListener("keydown", onKeyDown);
 			window.addEventListener("keyup", onKeyUp);
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280))); // Placeholder, replaced in game
@@ -157,9 +159,7 @@ const stateMachine = new StateMachine({
 		onGameOver(_, text) {
 			window.removeEventListener("keydown", onKeyDown);
 			window.removeEventListener("keyup", onKeyUp);
-			for (const sound of Object.values(sounds).filter(sound => !sound.paused)) {
-				sound.pause();
-			}
+			clearSounds();
 			objects.set("endScreen", new Drawable(() => {
 				context.fillStyle = "rgba(0, 0, 0, 0.5)";
 				context.fillRect(0, 0, 1920, 1280);
@@ -176,11 +176,6 @@ const stateMachine = new StateMachine({
 			}));
 			objects.set("menu", new TextButton(672, 880, "Menu", stateMachine.toMenu, 480));
 			objects.set("retry", new TextButton(1248, 880, "Retry", stateMachine.retry, 480));
-		},
-		onLeaveGameOver() {
-			for (const sound of Object.values(sounds).filter(sound => sound.paused)) {
-				sound.play();
-			}
 		}
 	}
 });

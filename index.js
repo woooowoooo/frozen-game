@@ -57,6 +57,12 @@ export function clear() {
 	}
 	objects.clear();
 }
+export function clearSounds() {
+	for (const sound of Object.values(sounds)) {
+		sound.pause();
+		sound.currentTime = 0;
+	}
+}
 export function render() {
 	context.clearRect(0, 0, 1920, 1280);
 	for (const object of objects.values()) {
@@ -88,7 +94,8 @@ export async function loadResources() {
 		soundOn: "png"
 	};
 	const soundData = {
-		goldberg: "mp3"
+		goldbergAria: "mp3",
+		goldbergVar1: "mp3"
 	};
 	const levelAmount = 3;
 	const promises = [];
