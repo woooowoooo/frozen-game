@@ -30,7 +30,7 @@ let time = 0;
 let fps = 0;
 // Character class
 class Character extends Drawable {
-	constructor (x, y, rotation) {
+	constructor (x = 0, y = 0, rotation = 0) {
 		changed = true;
 		function draw() {
 			context.fillStyle = colors.character;
@@ -38,7 +38,7 @@ class Character extends Drawable {
 		}
 		super(draw);
 		this.center = {x, y};
-		this.rotation = rotation ?? 0;
+		this.rotation = rotation;
 		this.speed = {
 			x: 0,
 			y: 0
@@ -64,14 +64,14 @@ class Character extends Drawable {
 		this.center.y += this.speed.y * deltaTime;
 	}
 }
-// New game
+// Game and level management
 export function newGame() {
 	heldKeys.clear();
-	character = new Character(600, 600);
+	character = new Character();
 	endGameText = null;
 	changed = true;
 	// Level
-	initLevel(1);
+	newLevel(1);
 	// Time
 	startTime = window.performance.now();
 	time = 0;
@@ -99,6 +99,17 @@ export function newGame() {
 		}));
 	}
 }
+function newLevel(number) {
+	if (levels[`level${number}`] == null) {
+		endGame(true);
+		return;
+	}
+	levelNumber = number;
+	level = levels[`level${number}`];
+	const pathText = level.getElementById("hitbox").getAttribute("d");
+	hitbox = new Path2D(pathText);
+	character.center.x = 0;
+}
 function endGame(win) {
 	if (!win) {
 		endGameText = ["Retry?"];
@@ -108,16 +119,6 @@ function endGame(win) {
 	endGameText = [`Time: ${time / 1000} seconds`, `Fastest Time: ${highScores.time / 1000} seconds`];
 }
 // Game mechanics
-function initLevel(number) {
-	if (levels[`level${number}`] == null) {
-		endGame(true);
-		return;
-	}
-	levelNumber = number;
-	level = levels[`level${number}`];
-	const pathText = level.getElementById("hitbox").getAttribute("d");
-	hitbox = new Path2D(pathText);
-}
 // Game loop
 export function onKeyDown(e) {
 	if (!heldKeys.has(e.key)) { // Prevent held key spam
@@ -155,8 +156,7 @@ export function update(deltaTime) {
 	character.update(deltaTime);
 	// New level
 	if (character.center.x > 1920) {
-		character.center.x = 0;
-		initLevel(levelNumber + 1);
+		newLevel(levelNumber + 1);
 	}
 	return [changed, endGameText];
 }
