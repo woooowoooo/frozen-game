@@ -1,12 +1,20 @@
 # Gameplay
 - [x] Come up with game idea
-- [ ] Terrain
-- [ ] Level storage format
-- [ ] Multiple levels
+
+## Levels
+- [x] Mult-level support
+- [x] Storage format
+	- [x] Load levels
+	- [x] Terrain
+	- [x] Spawn point
+- [x] Display levels
+- [ ] Collision
+	- [x] Detection (IN-PROGRESS)
+	- [ ] Resolution (IN-PROGRESS)
 
 ## Controls
-- [ ] Figure out controls
-	- [ ] Implement controls
+- [ ] Figure out controls (IN-PROGRESS)
+	- [ ] Implement controls (IN-PROGRESS)
 - [ ] Rotation
 - [ ] Sliding
 	- [ ] Friction
@@ -16,12 +24,12 @@
 - [ ] Title
 
 ## Graphics
-- [ ] Background image
+- [x] Menu image (INCOMPLETE)
 - [ ] Teaser image
-- [ ] Font
+- [x] Font (POSSIBLY PLACEHOLDER)
 - [ ] Terrain art
 - [ ] Character art
 
 ## Music
-- [ ] Menu theme
+- [ ] Menu theme (PLACEHOLDER)
 - [ ] Game theme
