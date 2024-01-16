@@ -146,7 +146,7 @@ export function handle({key}) {
 		endGame(false);
 		heldKeys.clear();
 	} else if (key === "r" || key === "R") {
-		newGame();
+		newLevel(levelNumber);
 	} else if (key === "X" || key === "x" || key === "ArrowUp") {
 		character.rotate(1); // Clockwise
 	} else if (key === "Z" || key === "z") {
@@ -168,7 +168,7 @@ export function update(deltaTime) {
 	character.update(deltaTime);
 	// Restart upon fall
 	if (character.center.y - RADIUS > 1280) {
-		newGame();
+		newLevel(levelNumber);
 	}
 	// New level
 	if (character.center.x - RADIUS > 1920) {
