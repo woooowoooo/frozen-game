@@ -111,7 +111,9 @@ function newLevel(number) {
 	level = levels[`level${number}`];
 	const pathText = level.getElementById("hitbox").getAttribute("d");
 	hitbox = new Path2D(pathText);
-	character.center.x = 0;
+	const spawnpoint = level.getElementById("spawnpoint"); // Spawnpoint is bottom center
+	character.center.x = Number.parseFloat(spawnpoint.getAttribute("cx"));
+	character.center.y = Number.parseFloat(spawnpoint.getAttribute("cy")) - RADIUS;
 }
 function endGame(win) {
 	if (!win) {
