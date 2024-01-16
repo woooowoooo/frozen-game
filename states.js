@@ -112,7 +112,7 @@ const stateMachine = new StateMachine({
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
 			objects.set("help", new Drawable(() => {
 				context.fillStyle = colors.text;
-				context.fontSize = 8;
+				context.fontSize = 6;
 				context.fillText("This game will eventually be a platformer.", 960, 280);
 				context.fillText("Left and right arrows move left and right.", 960, 400);
 				context.fillText("Press R to restart and ESC to exit.", 960, 520);
@@ -126,9 +126,19 @@ const stateMachine = new StateMachine({
 			objects.set("credits", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.fontSize = 12;
-				context.fillText("Everything", 960, 320);
+				context.fillText("Everything", 960, 240);
 				context.fontSize = 8;
-				context.fillText("woooowoooo", 960, 440);
+				context.fillText("woooowoooo", 960, 340);
+				context.fontSize = 10;
+				context.fillText("Music", 560, 560);
+				context.fillText("Font", 1360, 560);
+				context.fontSize = 6;
+				context.fillText("Goldberg Variations: Aria", 560, 640);
+				context.fillText("Raleway", 1360, 640);
+				context.fontSize = 4;
+				context.fillText("Johann Sebastian Bach", 560, 700);
+				context.fillText("(performed by Kimiko Ishizaka)", 560, 740);
+				context.fillText("The League of Moveable Type", 1360, 700);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
