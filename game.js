@@ -22,7 +22,6 @@ export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighS
 });
 const heldKeys = new Set();
 let character = null;
-let endGameText = null;
 let changed = true;
 // Level variables
 let levelNumber = 1;
@@ -94,7 +93,6 @@ class Character extends Drawable {
 export function newGame() {
 	heldKeys.clear();
 	character = new Character();
-	endGameText = null;
 	changed = true;
 	// Level
 	newLevel(1);
@@ -140,11 +138,14 @@ function newLevel(number) {
 }
 function endGame(win) {
 	if (!win) {
-		endGameText = ["Retry?"];
+		stateMachines.main.lose("Retry?");
 		return;
 	}
 	highScores.time = Math.min(time, highScores.time ?? Infinity);
-	endGameText = [`Time: ${time / 1000} seconds`, `Fastest Time: ${highScores.time / 1000} seconds`];
+	stateMachines.main.lose({
+		Time: `${time / 1000} seconds`,
+		"Fastest Time": `${highScores.time / 1000} seconds`
+	});
 }
 // Game mechanics
 function collisionCheck() {
@@ -166,8 +167,8 @@ export function onKeyUp(e) {
 }
 export function handle({key}) {
 	if (key === "Escape") {
-		endGame(false);
 		heldKeys.clear();
+		endGame(false);
 	} else if (key === "r" || key === "R") {
 		newLevel(levelNumber);
 	} else if (key === "X" || key === "x" || key === "ArrowUp") {
@@ -198,7 +199,7 @@ export function update(deltaTime) {
 	if (character.center.x - RADIUS > 1920) {
 		newLevel(levelNumber + 1);
 	}
-	return [changed, endGameText];
+	return changed;
 }
 export function render() {
 	changed = false;

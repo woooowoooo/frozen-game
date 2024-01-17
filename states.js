@@ -169,8 +169,15 @@ const stateMachine = new StateMachine({
 				context.fillText("GAME OVER", 960, 400);
 				context.fontSize = 8;
 				let textY = 540;
-				for (const line of text) {
-					context.fillText(line, 960, textY);
+				if (typeof text === "string") {
+					context.fillText(text, 960, textY);
+					return;
+				}
+				for (const [key, value] of Object.entries(text)) {
+					context.textAlign = "right";
+					context.fillText(`${key}: `, 960, textY);
+					context.textAlign = "left";
+					context.fillText(value, 960, textY);
 					textY += 100;
 				}
 			}));
@@ -197,10 +204,7 @@ function loop(time) {
 		return;
 	}
 	// Game loop (handling is done in game.js)
-	const [changed, endText] = update(deltaTime);
-	if (endText != null) {
-		stateMachine.lose(endText);
-	}
+	const changed = update(deltaTime);
 	if (changed) { // If level has updated
 		render();
 	}
