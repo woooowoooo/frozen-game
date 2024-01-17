@@ -44,6 +44,7 @@ class Character extends Drawable {
 			x: 0,
 			y: 0
 		};
+		objects.set("character", this);
 	}
 	rotate(offset) {
 		if (collisionCheck()) {
@@ -81,7 +82,6 @@ export function newGame() {
 	fps = 0;
 	// Add objects
 	objects.set("background", new Drawable(() => context.drawImage(images[`level${levelNumber}`], 0, 0, 1920, 1280))); // Replaces placeholder background
-	objects.set("character", character);
 	if (settings.debug) {
 		objects.set("debug", new Drawable(() => {
 			changed = true;
@@ -112,8 +112,7 @@ function newLevel(number) {
 	const pathText = level.getElementById("hitbox").getAttribute("d");
 	hitbox = new Path2D(pathText);
 	const spawnpoint = level.getElementById("spawnpoint"); // Spawnpoint is bottom center
-	character.center.x = Number.parseFloat(spawnpoint.getAttribute("cx"));
-	character.center.y = Number.parseFloat(spawnpoint.getAttribute("cy")) - RADIUS;
+	character = new Character(Number.parseFloat(spawnpoint.getAttribute("cx")), Number.parseFloat(spawnpoint.getAttribute("cy")) - RADIUS);
 }
 function endGame(win) {
 	if (!win) {
