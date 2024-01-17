@@ -4,6 +4,8 @@ const GRAVITY = 200; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 500; // px / sec
 const RADIUS = 50;
+const COLLISION_ROUGH_STEP = 100;
+const COLLISION_ITERATIONS = 16; // Precision of collision resolution
 // Rendering constants
 const DEBUG_X = 160;
 const DEBUG_Y = 1260;
@@ -57,10 +59,23 @@ class Character extends Drawable {
 	}
 	update(deltaTime) {
 		this.speed.y += GRAVITY * deltaTime; // Gravity
+		// Collision
 		if (collisionCheck()) {
-			while (collisionCheck()) {
-				this.center.y -= 1;
+			// Rough resolution (spam going up)
+			if (collisionCheck()) {
+				this.center.y -= COLLISION_ROUGH_STEP;
 			}
+			// Fine resolution (binary search)
+			let factor = COLLISION_ROUGH_STEP;
+			for (let i = 0; i < COLLISION_ITERATIONS; i++) {
+				if (collisionCheck()) {
+					this.center.y -= factor;
+				} else {
+					this.center.y += factor;
+				}
+				factor /= 2;
+			}
+			// Normal force
 			this.speed.y = 0;
 		}
 		if (this.speed.x !== 0 || this.speed.y !== 0) {
