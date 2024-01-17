@@ -5,7 +5,7 @@ const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 500; // px / sec
 const RADIUS = 50;
 // Rendering constants
-const DEBUG_X = 140;
+const DEBUG_X = 160;
 const DEBUG_Y = 1260;
 const DEBUG_LINE_HEIGHT = 40;
 // State variables
@@ -90,7 +90,9 @@ export function newGame() {
 			context.fillStyle = colors.text;
 			context.fontSize = 4;
 			const texts = {
-				FPS: `${fps.toFixed(2)} (may not be accurate)`,
+				Pos: `${character.center.x.toFixed(2)}, ${character.center.y.toFixed(2)}`,
+				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
+				FPS: `${fps.toFixed(2)}`,
 				Time: `${time / 1000} seconds`
 			};
 			let textY = DEBUG_Y - (Object.keys(texts).length - 1) * DEBUG_LINE_HEIGHT;

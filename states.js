@@ -181,17 +181,17 @@ const stateMachine = new StateMachine({
 });
 stateMachines.main = stateMachine;
 // Main loop
-const FPS = 60;
+const FPS = 3;
 const FRAME_TIME = 1000 / FPS;
 let lastTime = window.performance.now();
 function loop(time) {
 	const deltaTime = time - lastTime;
-	// Lock to 60 fps
-	if (deltaTime < FRAME_TIME) {
+	// Lock to low framerate when debugging
+	if (settings.debug && deltaTime < FRAME_TIME) {
 		requestAnimationFrame(loop);
 		return;
 	}
-	lastTime = time - (time % FRAME_TIME);
+	lastTime = time;
 	// Break on game loss
 	if (!stateMachine.is("game")) {
 		return;
