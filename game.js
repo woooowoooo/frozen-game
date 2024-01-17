@@ -1,4 +1,4 @@
-import {context, colors, images, sounds, levels, objects, settings, Drawable} from "./index.js";
+import {context, colors, images, sounds, levels, stateMachines, objects, settings, Drawable} from "./index.js";
 // Constants
 const GRAVITY = 1000; // px / sec^2
 const FRICTION = 500; // px / sec^2
@@ -8,7 +8,7 @@ const RADIUS = 50;
 const COLLISION_ROUGH_STEP = 100;
 const COLLISION_ITERATIONS = 16; // Precision of collision resolution
 // Rendering constants
-const DEBUG_X = 160;
+const DEBUG_X = 180;
 const DEBUG_Y = 1260;
 const DEBUG_LINE_HEIGHT = 40;
 // State variables
@@ -22,6 +22,7 @@ export const highScores = new Proxy(JSON.parse(localStorage.getItem("frozenHighS
 });
 const heldKeys = new Set();
 let character = null;
+let deaths = 0;
 let changed = true;
 // Level variables
 let levelNumber = 1;
@@ -93,6 +94,7 @@ class Character extends Drawable {
 export function newGame() {
 	heldKeys.clear();
 	character = new Character();
+	deaths = 0;
 	changed = true;
 	// Level
 	newLevel(1);
@@ -108,8 +110,9 @@ export function newGame() {
 			context.fillStyle = colors.text;
 			context.fontSize = 4;
 			const texts = {
-				Pos: `${character.center.x.toFixed(2)}, ${character.center.y.toFixed(2)}`,
+				Center: `${character.center.x.toFixed(2)}, ${character.center.y.toFixed(2)}`,
 				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
+				Deaths: `${deaths}`,
 				FPS: `${fps.toFixed(2)}`,
 				Time: `${time / 1000} seconds`
 			};
@@ -143,6 +146,7 @@ function endGame(win) {
 	}
 	highScores.time = Math.min(time, highScores.time ?? Infinity);
 	stateMachines.main.lose({
+		Deaths: deaths,
 		Time: `${time / 1000} seconds`,
 		"Fastest Time": `${highScores.time / 1000} seconds`
 	});
@@ -192,6 +196,7 @@ export function update(deltaTime) {
 	character.update(deltaTime);
 	// Restart upon fall
 	if (character.center.y - RADIUS > 1280) {
+		deaths++;
 		sounds.death.play();
 		newLevel(levelNumber);
 	}
