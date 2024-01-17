@@ -36,6 +36,8 @@ class Character extends Drawable {
 		function draw() {
 			context.fillStyle = colors.character;
 			context.fillRect(this.center.x - RADIUS, this.center.y - RADIUS, RADIUS * 2, RADIUS * 2);
+			context.fillStyle = colors.accent;
+			context.fillRect(this.center.x - RADIUS, this.center.y + RADIUS * 3 / 4, RADIUS * 2, RADIUS / 4);
 		}
 		super(draw);
 		this.center = {x, y};
