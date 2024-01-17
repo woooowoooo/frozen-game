@@ -1,9 +1,9 @@
 import {context, colors, images, sounds, levels, objects, settings, Drawable} from "./index.js";
 // Constants
-const GRAVITY = 200; // px / sec^2
+const GRAVITY = 1000; // px / sec^2
 const FRICTION = 500; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
-const MAX_SPEED = 500; // px / sec
+const MAX_SPEED = 750; // px / sec
 const RADIUS = 50;
 const COLLISION_ROUGH_STEP = 100;
 const COLLISION_ITERATIONS = 16; // Precision of collision resolution
