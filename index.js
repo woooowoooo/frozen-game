@@ -30,6 +30,7 @@ const objects = new Map();
 // Settings
 const defaultSettings = {
 	debug: false,
+	debugFPS: false,
 	muted: false,
 	volume: 100
 };

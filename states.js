@@ -92,14 +92,19 @@ const stateMachine = new StateMachine({
 		onSettings() {
 			clear();
 			objects.set("background", new Drawable(() => context.drawImage(images.background, 0, 0, 1920, 1280)));
+			const debugOffset = settings.debug ? 180 : 0;
 			objects.set("text", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.textAlign = "right";
 				context.fillText("Debug:", 600, 240 + 88);
-				context.fillText("Volume:", 600, 480 + 20);
+				context.fillText("Volume:", 600, 480 + 20 + debugOffset);
 			}));
+			if (settings.debug) {
+				objects.set("debugFPSText", new Drawable(() => context.fillText("Limit FPS:", 600, 420 + 88)));
+				objects.set("debugFPS", new TextToggle(1200, 420, "debugFPS"));
+			}
 			objects.set("debug", new TextToggle(1200, 240, "debug"));
-			objects.set("volume", new Slider(1200, 480, 960, "volume", 0, 100, 10, false, () => {
+			objects.set("volume", new Slider(1200, 480 + debugOffset, 960, "volume", 0, 100, 10, false, () => {
 				for (const sound of Object.values(sounds)) {
 					sound.volume = settings.volume / 100;
 				}
@@ -194,7 +199,7 @@ let lastTime = window.performance.now();
 function loop(time) {
 	const deltaTime = time - lastTime;
 	// Lock to low framerate when debugging
-	if (settings.debug && deltaTime < FRAME_TIME) {
+	if (settings.debug && settings.debugFPS && deltaTime < FRAME_TIME) {
 		requestAnimationFrame(loop);
 		return;
 	}
