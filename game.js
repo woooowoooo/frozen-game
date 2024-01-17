@@ -191,6 +191,7 @@ export function update(deltaTime) {
 	character.update(deltaTime);
 	// Restart upon fall
 	if (character.center.y - RADIUS > 1280) {
+		sounds.death.play();
 		newLevel(levelNumber);
 	}
 	// New level

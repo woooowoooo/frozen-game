@@ -95,7 +95,8 @@ export async function loadResources() {
 	};
 	const soundData = {
 		goldbergAria: "mp3",
-		goldbergVar1: "mp3"
+		goldbergVar1: "mp3",
+		death: "mp3"
 	};
 	const levelAmount = 3;
 	const promises = [];
