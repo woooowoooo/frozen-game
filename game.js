@@ -1,6 +1,7 @@
 import {context, colors, images, sounds, levels, objects, settings, Drawable} from "./index.js";
 // Constants
 const GRAVITY = 200; // px / sec^2
+const FRICTION = 500; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 500; // px / sec
 const RADIUS = 50;
@@ -58,6 +59,7 @@ class Character extends Drawable {
 		this.rotation = (this.rotation + offset) % 360;
 	}
 	update(deltaTime) {
+		// Forces
 		this.speed.y += GRAVITY * deltaTime; // Gravity
 		// Collision
 		if (collisionCheck()) {
@@ -75,9 +77,12 @@ class Character extends Drawable {
 				}
 				factor /= 2;
 			}
+			// Friction
+			this.speed.x -= Math.sign(this.speed.x) * FRICTION * deltaTime;
 			// Normal force
 			this.speed.y = 0;
 		}
+		// Apply changes
 		if (this.speed.x !== 0 || this.speed.y !== 0) {
 			changed = true;
 		}
