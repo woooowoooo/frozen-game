@@ -83,6 +83,7 @@ class Character extends Drawable {
 				}
 				factor /= 2;
 			}
+			this.center.y += factor * 2; // Keep character in ground to prevent gravity next update
 			// Friction
 			if (Math.abs(this.speed.x) < FRICTION * deltaTime) {
 				this.speed.x = 0;
