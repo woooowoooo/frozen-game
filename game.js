@@ -59,8 +59,14 @@ class Character extends Drawable {
 		this.rotation = (this.rotation + offset) % 360;
 	}
 	update(deltaTime) {
-		// Forces
-		this.speed.y += GRAVITY * deltaTime; // Gravity
+		// Apply changes
+		if (this.speed.x !== 0 || this.speed.y !== 0) {
+			changed = true;
+		}
+		this.center.x += this.speed.x * deltaTime;
+		this.center.y += this.speed.y * deltaTime;
+		// Gravity
+		this.speed.y += GRAVITY * deltaTime;
 		// Collision
 		if (collisionCheck()) {
 			// Rough resolution (spam going up)
@@ -86,12 +92,6 @@ class Character extends Drawable {
 			// Normal force
 			this.speed.y = 0;
 		}
-		// Apply changes
-		if (this.speed.x !== 0 || this.speed.y !== 0) {
-			changed = true;
-		}
-		this.center.x += this.speed.x * deltaTime;
-		this.center.y += this.speed.y * deltaTime;
 	}
 }
 // Game and level management
@@ -114,7 +114,7 @@ export function newGame() {
 			context.fillStyle = colors.text;
 			context.fontSize = 4;
 			const texts = {
-				Center: `${character.center.x.toFixed(2)}, ${character.center.y.toFixed(2)}`,
+				Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
 				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
 				Deaths: `${deaths}`,
 				FPS: `${fps.toFixed(2)}`,

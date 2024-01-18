@@ -193,8 +193,8 @@ const stateMachine = new StateMachine({
 });
 stateMachines.main = stateMachine;
 // Main loop
-const FPS = 3;
-const FRAME_TIME = 1000 / FPS;
+const DEBUG_FPS = 5;
+const FRAME_TIME = 1000 / DEBUG_FPS;
 let lastTime = window.performance.now();
 function loop(time) {
 	const deltaTime = time - lastTime;
