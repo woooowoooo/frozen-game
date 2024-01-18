@@ -78,7 +78,11 @@ class Character extends Drawable {
 				factor /= 2;
 			}
 			// Friction
-			this.speed.x -= Math.sign(this.speed.x) * FRICTION * deltaTime;
+			if (Math.abs(this.speed.x) < FRICTION * deltaTime) {
+				this.speed.x = 0;
+			} else {
+				this.speed.x -= Math.sign(this.speed.x) * FRICTION * deltaTime;
+			}
 			// Normal force
 			this.speed.y = 0;
 		}
