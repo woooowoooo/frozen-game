@@ -70,7 +70,7 @@ class Character extends Drawable {
 		// Collision
 		if (collisionCheck()) {
 			// Rough resolution (spam going up)
-			if (collisionCheck()) {
+			while (collisionCheck()) {
 				this.center.y -= COLLISION_ROUGH_STEP;
 			}
 			// Fine resolution (binary search)
