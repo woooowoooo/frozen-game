@@ -99,7 +99,7 @@ export async function loadResources() {
 		goldbergVar1: "mp3",
 		death: "mp3"
 	};
-	const levelAmount = 3;
+	const levelAmount = 4;
 	const promises = [];
 	const initialize = function (cache, id, path, type, eventType) {
 		cache[id] = document.createElement(type);
