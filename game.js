@@ -170,10 +170,13 @@ function endGame(win) {
 }
 // Game mechanics
 function collisionCheck() {
-	let result = context.isPointInPath(hitbox, character.center.x + RADIUS, character.center.y + RADIUS);
-	result ||= context.isPointInPath(hitbox, character.center.x - RADIUS, character.center.y + RADIUS);
-	result ||= context.isPointInPath(hitbox, character.center.x + RADIUS, character.center.y - RADIUS);
-	result ||= context.isPointInPath(hitbox, character.center.x - RADIUS, character.center.y - RADIUS);
+	const radians = (character.rotation + 45) * Math.PI / 180; // Convert to radians and offset
+	const cosOffset = Math.sqrt(2) * RADIUS * Math.cos(radians);
+	const sinOffset = Math.sqrt(2) * RADIUS * Math.sin(radians);
+	let result = context.isPointInPath(hitbox, character.center.x - cosOffset, character.center.y - sinOffset);
+	result ||= context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset);
+	result ||= context.isPointInPath(hitbox, character.center.x + cosOffset, character.center.y + sinOffset);
+	result ||= context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset);
 	return result;
 }
 // Game loop
