@@ -3,12 +3,13 @@ import {context, colors, images, sounds, levels, stateMachines, objects, setting
 const GRAVITY = 1000; // px / sec^2
 const FRICTION = 500; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
+const ROTATION_SENSITIVITY = 90; // deg / sec
 const MAX_SPEED = 750; // px / sec
 const RADIUS = 50;
 const COLLISION_ROUGH_STEP = 100;
 const COLLISION_ITERATIONS = 16; // Precision of collision resolution
 // Rendering constants
-const DEBUG_X = 180;
+const DEBUG_X = 200;
 const DEBUG_Y = 1260;
 const DEBUG_LINE_HEIGHT = 40;
 // State variables
@@ -50,13 +51,6 @@ class Character extends Drawable {
 			y: 0
 		};
 		objects.set("character", this);
-	}
-	rotate(offset) {
-		if (collisionCheck()) {
-			return;
-		}
-		changed = true;
-		this.rotation = (this.rotation + offset) % 360;
 	}
 	update(deltaTime) {
 		// Apply changes
@@ -117,6 +111,7 @@ export function newGame() {
 			const texts = {
 				Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
 				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
+				Rotation: `${character.rotation.toFixed(2)}°`,
 				Deaths: `${deaths}`,
 				FPS: `${fps.toFixed(2)}`,
 				Time: `${time / 1000} seconds`
@@ -180,10 +175,6 @@ export function handle({key}) {
 		endGame(false);
 	} else if (key === "r" || key === "R") {
 		newLevel(levelNumber);
-	} else if (key === "X" || key === "x" || key === "ArrowUp") {
-		character.rotate(1); // Clockwise
-	} else if (key === "Z" || key === "z") {
-		character.rotate(-1); // Counterclockwise
 	}
 }
 export function update(deltaTime) {
@@ -196,6 +187,12 @@ export function update(deltaTime) {
 		if (Math.abs(character.speed.x + direction * SENSITIVITY * deltaTime) < MAX_SPEED) {
 			character.speed.x += direction * SENSITIVITY * deltaTime;
 		}
+	}
+	if (heldKeys.has("x") || heldKeys.has("x") || heldKeys.has("ArrowUp")) {
+		character.rotation = (character.rotation + ROTATION_SENSITIVITY * deltaTime) % 360; // Clockwise
+	}
+	if (heldKeys.has("Z") || heldKeys.has("z") || heldKeys.has("ArrowDown")) {
+		character.rotation = (character.rotation - ROTATION_SENSITIVITY * deltaTime) % 360; // Counterclockwise
 	}
 	// Update game state
 	character.update(deltaTime);
