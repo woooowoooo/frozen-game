@@ -38,10 +38,27 @@ class Character extends Drawable {
 	constructor (x = 0, y = 0, rotation = 0) {
 		changed = true;
 		function draw() {
+			const radians = (this.rotation + 45) * Math.PI / 180; // Convert to radians and offset
+			const cosOffset = Math.sqrt(2) * RADIUS * Math.cos(radians);
+			const sinOffset = Math.sqrt(2) * RADIUS * Math.sin(radians);
+			// Base
 			context.fillStyle = colors.character;
-			context.fillRect(this.center.x - RADIUS, this.center.y - RADIUS, RADIUS * 2, RADIUS * 2);
+			const hitbox = new Path2D();
+			hitbox.moveTo(this.center.x - cosOffset, this.center.y - sinOffset);
+			hitbox.lineTo(this.center.x - sinOffset, this.center.y + cosOffset);
+			hitbox.lineTo(this.center.x + cosOffset, this.center.y + sinOffset);
+			hitbox.lineTo(this.center.x + sinOffset, this.center.y - cosOffset);
+			hitbox.closePath();
+			context.fill(hitbox);
+			// Platform
 			context.fillStyle = colors.accent;
-			context.fillRect(this.center.x - RADIUS, this.center.y + RADIUS * 3 / 4, RADIUS * 2, RADIUS / 4);
+			context.beginPath();
+			context.moveTo(this.center.x - sinOffset * 7 / 8 - cosOffset / 8, this.center.y + cosOffset * 7 / 8 - sinOffset / 8);
+			context.lineTo(this.center.x - sinOffset, this.center.y + cosOffset);
+			context.lineTo(this.center.x + cosOffset, this.center.y + sinOffset);
+			context.lineTo(this.center.x + cosOffset * 7 / 8 + sinOffset / 8, this.center.y + sinOffset * 7 / 8 - cosOffset / 8);
+			context.closePath();
+			context.fill();
 		}
 		super(draw);
 		this.center = {x, y};
