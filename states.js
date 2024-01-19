@@ -118,9 +118,10 @@ const stateMachine = new StateMachine({
 			objects.set("help", new Drawable(() => {
 				context.fillStyle = colors.text;
 				context.fontSize = 6;
-				context.fillText("This game will eventually be a platformer.", 960, 280);
-				context.fillText("Left and right arrows move left and right.", 960, 400);
-				context.fillText("Press R to restart and ESC to exit.", 960, 520);
+				context.fillText("This game is a work-in-progress. There will be bugs!", 960, 280);
+				context.fillText("← and → move left and right.", 960, 400);
+				context.fillText("↑ and ↓ (or X and Z) rotate clockwise and counterclockwise.", 960, 520);
+				context.fillText("Press R to restart the level and ESC to exit or restart the game.", 960, 640);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
@@ -143,7 +144,8 @@ const stateMachine = new StateMachine({
 				context.fontSize = 4;
 				context.fillText("Johann Sebastian Bach", 560, 700);
 				context.fillText("(performed by Kimiko Ishizaka)", 560, 740);
-				context.fillText("The League of Moveable Type", 1360, 700);
+				context.fillText("Matt McInerney", 1360, 700);
+				context.fillText("(The League of Moveable Type)", 1360, 740);
 			}));
 			objects.set("return", new TextButton(960, 880, "Return", stateMachine.toMenu, 640));
 			objects.set("mute", new MuteButton());
