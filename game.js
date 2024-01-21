@@ -3,7 +3,8 @@ import {context, colors, images, sounds, levels, stateMachines, objects, setting
 const GRAVITY = 1000; // px / sec^2
 const FRICTION = 500; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
-const ROTATION_SENSITIVITY = 90; // deg / sec
+const ROTATION_GRAVITY = 90; // deg / sec
+const ROTATION_SENSITIVITY = 180; // deg / sec
 const MAX_SPEED = 750; // px / sec
 const RADIUS = 50;
 const COLLISION_ROUGH_STEP = 100;
@@ -78,16 +79,23 @@ class Character extends Drawable {
 		this.center.y += this.speed.y * deltaTime;
 		// Gravity
 		this.speed.y += GRAVITY * deltaTime;
+		const contacts = collisionCheck();
+		if (contacts.filter(Boolean).length === 1) { // Rotation if one point of contact
+			// Fall away from contact point
+			const contactAngle = contacts.findIndex(Boolean) * 90 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
+			const direction = Math.sign(Math.sin((this.rotation - contactAngle) * Math.PI / 180));
+			this.rotation = (this.rotation + direction * ROTATION_GRAVITY * deltaTime) % 360;
+		}
 		// Collision
-		if (collisionCheck()) {
+		if (collisionCheck().some(Boolean)) { // Cannot use contacts again because angle change
 			// Rough resolution (spam going up)
-			while (collisionCheck()) {
+			while (collisionCheck().some(Boolean)) {
 				this.center.y -= COLLISION_ROUGH_STEP;
 			}
 			// Fine resolution (binary search)
 			let factor = COLLISION_ROUGH_STEP;
 			for (let i = 0; i < COLLISION_ITERATIONS; i++) {
-				if (collisionCheck()) {
+				if (collisionCheck().some(Boolean)) {
 					this.center.y -= factor;
 				} else {
 					this.center.y += factor;
@@ -124,11 +132,12 @@ export function newGame() {
 		objects.set("debug", new Drawable(() => {
 			changed = true;
 			context.fillStyle = colors.text;
-			context.fontSize = 4;
+			context.font = "30px monospace";
 			const texts = {
 				Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
 				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
 				Rotation: `${character.rotation.toFixed(2)}°`,
+				Contacts: `${collisionCheck().map((value) => value ? "1" : "0")}`,
 				Deaths: `${deaths}`,
 				FPS: `${fps.toFixed(2)}`,
 				Time: `${time / 1000} seconds`
@@ -173,11 +182,12 @@ function collisionCheck() {
 	const radians = (character.rotation + 45) * Math.PI / 180; // Convert to radians and offset
 	const cosOffset = Math.sqrt(2) * RADIUS * Math.cos(radians);
 	const sinOffset = Math.sqrt(2) * RADIUS * Math.sin(radians);
-	let result = context.isPointInPath(hitbox, character.center.x - cosOffset, character.center.y - sinOffset);
-	result ||= context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset);
-	result ||= context.isPointInPath(hitbox, character.center.x + cosOffset, character.center.y + sinOffset);
-	result ||= context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset);
-	return result;
+	return [
+		context.isPointInPath(hitbox, character.center.x - cosOffset, character.center.y - sinOffset),
+		context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset),
+		context.isPointInPath(hitbox, character.center.x + cosOffset, character.center.y + sinOffset),
+		context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset)
+	];
 }
 // Game loop
 export function onKeyDown(e) {
