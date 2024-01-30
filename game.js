@@ -222,9 +222,10 @@ export function update(deltaTime) {
 	// Handle held keys
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
 		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;
-		if (Math.sign(character.speed.x) !== direction || Math.abs(character.speed.x) < MAX_SPEED) { // TODO: Figure out what to do with vertical speed
-			character.speed.x += direction * Math.cos(character.rotation * Math.PI / 180) * SENSITIVITY * deltaTime;
-			character.speed.y += direction * Math.sin(character.rotation * Math.PI / 180) * SENSITIVITY * deltaTime;
+		character.speed.x += direction * Math.cos(character.radians) * SENSITIVITY * deltaTime;
+		character.speed.y += direction * Math.sin(character.radians) * SENSITIVITY * deltaTime;
+		if (Math.abs(character.speed.x) > MAX_SPEED) { // TODO: Figure out what to do with vertical speed
+			character.speed.x = Math.sign(character.speed.x) * MAX_SPEED;
 		}
 	}
 	if (heldKeys.has("x") || heldKeys.has("x") || heldKeys.has("ArrowUp")) {
