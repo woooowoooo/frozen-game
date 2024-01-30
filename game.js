@@ -7,8 +7,8 @@ const ROTATION_GRAVITY = 90; // deg / sec
 const ROTATION_SENSITIVITY = 180; // deg / sec
 const MAX_SPEED = 750; // px / sec
 const RADIUS = 50;
-const COLLISION_ROUGH_STEP = 100;
-const COLLISION_ITERATIONS = 16; // Precision of collision resolution
+const COLLISION_ROUGH_STEP = 10;
+const COLLISION_ITERATIONS = 12; // Precision of collision resolution
 // Rendering constants
 const DEBUG_X = 200;
 const DEBUG_Y = 1260;
