@@ -223,11 +223,7 @@ export function handle({key}) {
 		newLevel(levelNumber);
 	}
 }
-export function update(deltaTime) {
-	deltaTime /= 1000; // Convert to seconds
-	time = window.performance.now() - startTime;
-	fps = 1 / deltaTime;
-	// Handle held keys
+function handleHeld(deltaTime) {
 	if (heldKeys.has("ArrowLeft") !== heldKeys.has("ArrowRight")) {
 		const direction = heldKeys.has("ArrowLeft") ? -1 : 1;
 		character.speed.x += direction * Math.cos(character.radians) * SENSITIVITY * deltaTime;
@@ -242,6 +238,13 @@ export function update(deltaTime) {
 	if (heldKeys.has("Z") || heldKeys.has("z") || heldKeys.has("ArrowDown")) {
 		character.rotation = (character.rotation - ROTATION_SENSITIVITY * deltaTime) % 360; // Counterclockwise
 	}
+}
+export function update(deltaTime) {
+	deltaTime /= 1000; // Convert to seconds
+	time = window.performance.now() - startTime;
+	fps = 1 / deltaTime;
+	// Handle held keys
+	handleHeld(deltaTime);
 	// Update game state
 	character.update(deltaTime);
 	// Restart upon fall
