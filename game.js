@@ -88,21 +88,7 @@ class Character extends Drawable {
 		}
 		// Collision
 		if (collisionCheck().some(Boolean)) { // Cannot use contacts again because angle change
-			// Rough resolution (spam going up)
-			while (collisionCheck().some(Boolean)) {
-				this.center.y -= COLLISION_ROUGH_STEP;
-			}
-			// Fine resolution (binary search)
-			let factor = COLLISION_ROUGH_STEP;
-			for (let i = 0; i < COLLISION_ITERATIONS; i++) {
-				if (collisionCheck().some(Boolean)) {
-					this.center.y -= factor;
-				} else {
-					this.center.y += factor;
-				}
-				factor /= 2;
-			}
-			this.center.y += factor * 2; // Keep character in ground to prevent gravity next update
+			collisionResolve();
 			// Friction
 			if (Math.abs(this.speed.x) < FRICTION * deltaTime) {
 				this.speed.x = 0;
@@ -177,7 +163,7 @@ function endGame(win) {
 		"Fastest Time": `${highScores.time / 1000} seconds`
 	});
 }
-// Game mechanics
+// Physics
 function collisionCheck() {
 	const radians = (character.rotation + 45) * Math.PI / 180; // Convert to radians and offset
 	const cosOffset = Math.sqrt(2) * RADIUS * Math.cos(radians);
@@ -189,6 +175,28 @@ function collisionCheck() {
 		context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset)
 	];
 }
+function collisionResolve() {
+	const normalAngle = -90 * Math.PI / 180; // For now just straight up
+	// Rough resolution (spam going away from every contact point)
+	while (collisionCheck().some(Boolean)) {
+		character.center.x += Math.cos(normalAngle) * COLLISION_ROUGH_STEP;
+		character.center.y += Math.sin(normalAngle) * COLLISION_ROUGH_STEP;
+	}
+	// Fine resolution (binary search)
+	let factor = COLLISION_ROUGH_STEP;
+	for (let i = 0; i < COLLISION_ITERATIONS; i++) {
+		if (collisionCheck().some(Boolean)) {
+			character.center.x += Math.cos(normalAngle) * factor;
+			character.center.y += Math.sin(normalAngle) * factor;
+		} else {
+			character.center.x -= Math.cos(normalAngle) * factor;
+			character.center.y -= Math.sin(normalAngle) * factor;
+		}
+		factor /= 2;
+	}
+	character.center.y += factor * 2; // Keep character in ground to prevent gravity next update
+}
+// Game mechanics
 // Game loop
 export function onKeyDown(e) {
 	if (!heldKeys.has(e.key)) { // Prevent held key spam
