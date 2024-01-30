@@ -54,21 +54,27 @@ class Character extends Drawable {
 			// Platform
 			context.fillStyle = colors.accent;
 			context.beginPath();
-			context.moveTo(this.center.x - sinOffset * 7 / 8 - cosOffset / 8, this.center.y + cosOffset * 7 / 8 - sinOffset / 8);
+			context.moveTo(...this.transform(-RADIUS, RADIUS * 3 / 4));
 			context.lineTo(this.center.x - sinOffset, this.center.y + cosOffset);
 			context.lineTo(this.center.x + cosOffset, this.center.y + sinOffset);
-			context.lineTo(this.center.x + cosOffset * 7 / 8 + sinOffset / 8, this.center.y + sinOffset * 7 / 8 - cosOffset / 8);
+			context.lineTo(...this.transform(RADIUS, RADIUS * 3 / 4));
 			context.closePath();
 			context.fill();
 		}
 		super(draw);
 		this.center = {x, y};
-		this.rotation = rotation;
-		this.speed = {
-			x: 0,
-			y: 0
-		};
+		this.speed = {x: 0, y: 0};
+		this.rotation = rotation; // Degrees clockwise (y direction opposite of math graphs)
 		objects.set("character", this);
+	}
+	get radians() {
+		return this.rotation * Math.PI / 180;
+	}
+	transform(x, y) {
+		return [
+			this.center.x + x * Math.cos(this.radians) - y * Math.sin(this.radians),
+			this.center.y + x * Math.sin(this.radians) + y * Math.cos(this.radians)
+		];
 	}
 	update(deltaTime) {
 		// Apply changes
