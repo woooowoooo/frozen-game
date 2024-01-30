@@ -52,10 +52,10 @@ class Character extends Drawable {
 			// Platform
 			context.fillStyle = colors.accent;
 			context.beginPath();
-			context.moveTo(...this.transform(-RADIUS, RADIUS * 3 / 4));
+			context.moveTo(...this.transform(-1, 3 / 4));
 			context.lineTo(this.center.x - sinOffset, this.center.y + cosOffset);
 			context.lineTo(this.center.x + cosOffset, this.center.y + sinOffset);
-			context.lineTo(...this.transform(RADIUS, RADIUS * 3 / 4));
+			context.lineTo(...this.transform(1, 3 / 4));
 			context.closePath();
 			context.fill();
 		}
@@ -70,8 +70,8 @@ class Character extends Drawable {
 	}
 	transform(x, y) {
 		return [
-			this.center.x + x * Math.cos(this.radians) - y * Math.sin(this.radians),
-			this.center.y + x * Math.sin(this.radians) + y * Math.cos(this.radians)
+			this.center.x + x * RADIUS * Math.cos(this.radians) - y * RADIUS * Math.sin(this.radians),
+			this.center.y + x * RADIUS * Math.sin(this.radians) + y * RADIUS * Math.cos(this.radians)
 		];
 	}
 	update(deltaTime) {
@@ -171,14 +171,14 @@ function endGame(win) {
 const COLLISION_ROUGH_STEP = 10;
 const COLLISION_ITERATIONS = 12; // Precision of collision resolution
 const COLLISION_POINTS = [
-	[-RADIUS, -RADIUS],
-	[0, -RADIUS],
-	[RADIUS, -RADIUS],
-	[RADIUS, 0],
-	[RADIUS, RADIUS],
-	[0, RADIUS],
-	[-RADIUS, RADIUS],
-	[-RADIUS, 0]
+	[-1, -1],
+	[0, -1],
+	[1, -1],
+	[1, 0],
+	[1, 1],
+	[0, 1],
+	[-1, 1],
+	[-1, 0]
 ];
 function collisionCheck() {
 	return COLLISION_POINTS.map(([x, y]) => context.isPointInPath(hitbox, ...character.transform(x, y)));
