@@ -7,8 +7,6 @@ const ROTATION_GRAVITY = 90; // deg / sec
 const ROTATION_SENSITIVITY = 180; // deg / sec
 const MAX_SPEED = 750; // px / sec
 const RADIUS = 50;
-const COLLISION_ROUGH_STEP = 10;
-const COLLISION_ITERATIONS = 12; // Precision of collision resolution
 // Rendering constants
 const DEBUG_X = 200;
 const DEBUG_Y = 1260;
@@ -88,7 +86,7 @@ class Character extends Drawable {
 		const contacts = collisionCheck();
 		if (contacts.filter(Boolean).length === 1) { // Rotation if one point of contact
 			// Fall away from contact point
-			const contactAngle = contacts.findIndex(Boolean) * 90 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
+			const contactAngle = contacts.findIndex(Boolean) * 45 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
 			const direction = -Math.sign(Math.cos((contactAngle + this.rotation) * Math.PI / 180));
 			this.rotation = (this.rotation + direction * ROTATION_GRAVITY * deltaTime) % 360;
 		}
@@ -169,17 +167,21 @@ function endGame(win) {
 		"Fastest Time": `${highScores.time / 1000} seconds`
 	});
 }
-// Physics
+// Collision
+const COLLISION_ROUGH_STEP = 10;
+const COLLISION_ITERATIONS = 12; // Precision of collision resolution
+const COLLISION_POINTS = [
+	[-RADIUS, -RADIUS],
+	[0, -RADIUS],
+	[RADIUS, -RADIUS],
+	[RADIUS, 0],
+	[RADIUS, RADIUS],
+	[0, RADIUS],
+	[-RADIUS, RADIUS],
+	[-RADIUS, 0]
+];
 function collisionCheck() {
-	const radians = (character.rotation + 45) * Math.PI / 180; // Convert to radians and offset
-	const cosOffset = Math.sqrt(2) * RADIUS * Math.cos(radians);
-	const sinOffset = Math.sqrt(2) * RADIUS * Math.sin(radians);
-	return [
-		context.isPointInPath(hitbox, character.center.x - cosOffset, character.center.y - sinOffset),
-		context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset),
-		context.isPointInPath(hitbox, character.center.x + cosOffset, character.center.y + sinOffset),
-		context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset)
-	];
+	return COLLISION_POINTS.map(([x, y]) => context.isPointInPath(hitbox, ...character.transform(x, y)));
 }
 function collisionResolve() {
 	const normalAngle = -90 * Math.PI / 180; // For now just straight up
