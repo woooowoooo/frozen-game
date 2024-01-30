@@ -83,7 +83,7 @@ class Character extends Drawable {
 		if (contacts.filter(Boolean).length === 1) { // Rotation if one point of contact
 			// Fall away from contact point
 			const contactAngle = contacts.findIndex(Boolean) * 90 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
-			const direction = Math.sign(Math.sin((this.rotation - contactAngle) * Math.PI / 180));
+			const direction = -Math.sign(Math.cos((contactAngle + this.rotation) * Math.PI / 180));
 			this.rotation = (this.rotation + direction * ROTATION_GRAVITY * deltaTime) % 360;
 		}
 		// Collision
@@ -137,7 +137,7 @@ export function newGame() {
 				Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
 				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
 				Rotation: `${character.rotation.toFixed(2)}°`,
-				Contacts: `${collisionCheck().map((value) => value ? "1" : "0")}`,
+				Contacts: `${collisionCheck().map((value) => value ? "T" : "F")}`,
 				Deaths: `${deaths}`,
 				FPS: `${fps.toFixed(2)}`,
 				Time: `${time / 1000} seconds`
@@ -184,9 +184,9 @@ function collisionCheck() {
 	const sinOffset = Math.sqrt(2) * RADIUS * Math.sin(radians);
 	return [
 		context.isPointInPath(hitbox, character.center.x - cosOffset, character.center.y - sinOffset),
-		context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset),
+		context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset),
 		context.isPointInPath(hitbox, character.center.x + cosOffset, character.center.y + sinOffset),
-		context.isPointInPath(hitbox, character.center.x + sinOffset, character.center.y - cosOffset)
+		context.isPointInPath(hitbox, character.center.x - sinOffset, character.center.y + cosOffset)
 	];
 }
 // Game loop
