@@ -11,6 +11,19 @@ const ANGULAR_GRAVITY = 360; // deg / sec^2
 const ANGULAR_DRAG = 1; // 1 / sec somehow
 const ANGULAR_SENSITIVITY = 540; // deg / sec^2
 const MAX_ANGULAR_SPEED = 180; // deg / sec
+// Collision
+const COLLISION_POINTS = [
+	[-1, -1],
+	[0, -1],
+	[1, -1],
+	[1, 0],
+	[1, 1],
+	[0, 1],
+	[-1, 1],
+	[-1, 0]
+];
+const COLLISION_ROUGH_STEP = 10;
+const COLLISION_ITERATIONS = 12; // Precision of collision resolution
 // Rendering
 const DEBUG_X = 200;
 const DEBUG_Y = 1260;
@@ -116,6 +129,31 @@ class Character extends Drawable {
 		}
 	}
 }
+// Collision
+function collisionCheck() {
+	return COLLISION_POINTS.map(([x, y]) => context.isPointInPath(hitbox, ...character.transform(x, y)));
+}
+function collisionResolve() {
+	const normalAngle = -90 * Math.PI / 180; // For now just straight up
+	// Rough resolution (spam going away from every contact point)
+	while (collisionCheck().some(Boolean)) {
+		character.center.x += Math.cos(normalAngle) * COLLISION_ROUGH_STEP;
+		character.center.y += Math.sin(normalAngle) * COLLISION_ROUGH_STEP;
+	}
+	// Fine resolution (binary search)
+	let factor = COLLISION_ROUGH_STEP;
+	for (let i = 0; i < COLLISION_ITERATIONS; i++) {
+		if (collisionCheck().some(Boolean)) {
+			character.center.x += Math.cos(normalAngle) * factor;
+			character.center.y += Math.sin(normalAngle) * factor;
+		} else {
+			character.center.x -= Math.cos(normalAngle) * factor;
+			character.center.y -= Math.sin(normalAngle) * factor;
+		}
+		factor /= 2;
+	}
+	character.center.y += factor * 2; // Keep character in ground to prevent gravity next update
+}
 // Game and level management
 function drawDebugText() {
 	changed = true;
@@ -181,42 +219,6 @@ function endGame(win) {
 		"Fastest Time": `${highScores.time / 1000} seconds`
 	});
 }
-// Collision
-const COLLISION_ROUGH_STEP = 10;
-const COLLISION_ITERATIONS = 12; // Precision of collision resolution
-const COLLISION_POINTS = [
-	[-1, -1],
-	[0, -1],
-	[1, -1],
-	[1, 0],
-	[1, 1],
-	[0, 1],
-	[-1, 1],
-	[-1, 0]
-];
-function collisionCheck() {
-	return COLLISION_POINTS.map(([x, y]) => context.isPointInPath(hitbox, ...character.transform(x, y)));
-}
-function collisionResolve() {
-	const normalAngle = -90 * Math.PI / 180; // For now just straight up
-	// Rough resolution (spam going away from every contact point)
-	while (collisionCheck().some(Boolean)) {
-		character.center.x += Math.cos(normalAngle) * COLLISION_ROUGH_STEP;
-		character.center.y += Math.sin(normalAngle) * COLLISION_ROUGH_STEP;
-	}
-	// Fine resolution (binary search)
-	let factor = COLLISION_ROUGH_STEP;
-	for (let i = 0; i < COLLISION_ITERATIONS; i++) {
-		if (collisionCheck().some(Boolean)) {
-			character.center.x += Math.cos(normalAngle) * factor;
-			character.center.y += Math.sin(normalAngle) * factor;
-		} else {
-			character.center.x -= Math.cos(normalAngle) * factor;
-			character.center.y -= Math.sin(normalAngle) * factor;
-		}
-		factor /= 2;
-	}
-	character.center.y += factor * 2; // Keep character in ground to prevent gravity next update
 // Game mechanics
 // Game loop
 export function onKeyDown(e) {
