@@ -1,13 +1,15 @@
 import {context, colors, images, sounds, levels, stateMachines, objects, settings, Drawable} from "./index.js";
 // Constants
+const RADIUS = 50;
+// Linear speed
 const GRAVITY = 1000; // px / sec^2
 const FRICTION = 500; // px / sec^2
 const SENSITIVITY = 1000; // px / sec^2
-const ROTATION_GRAVITY = 90; // deg / sec
-const ROTATION_SENSITIVITY = 180; // deg / sec
 const MAX_SPEED = 750; // px / sec
-const RADIUS = 50;
-// Rendering constants
+// Angular speed
+const ANGULAR_GRAVITY = 360; // deg / sec^2
+const ANGULAR_SENSITIVITY = 540; // deg / sec^2
+// Rendering
 const DEBUG_X = 200;
 const DEBUG_Y = 1260;
 const DEBUG_LINE_HEIGHT = 40;
@@ -63,6 +65,7 @@ class Character extends Drawable {
 		this.center = {x, y};
 		this.speed = {x: 0, y: 0};
 		this.rotation = rotation; // Degrees clockwise (y direction opposite of math graphs)
+		this.angularSpeed = 0;
 		objects.set("character", this);
 	}
 	get radians() {
@@ -81,6 +84,7 @@ class Character extends Drawable {
 		}
 		this.center.x += this.speed.x * deltaTime;
 		this.center.y += this.speed.y * deltaTime;
+		this.rotation = (this.rotation + this.angularSpeed * deltaTime) % 360;
 		// Gravity
 		this.speed.y += GRAVITY * deltaTime;
 		const contacts = collisionCheck();
@@ -88,7 +92,7 @@ class Character extends Drawable {
 			// Fall away from contact point
 			const contactAngle = contacts.findIndex(Boolean) * 45 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
 			const direction = -Math.sign(Math.cos((contactAngle + this.rotation) * Math.PI / 180));
-			this.rotation = (this.rotation + direction * ROTATION_GRAVITY * deltaTime) % 360;
+			this.angularSpeed += direction * ANGULAR_GRAVITY * deltaTime;
 		}
 		// Collision
 		if (collisionCheck().some(Boolean)) { // Cannot use contacts again because angle change
@@ -113,6 +117,7 @@ function drawDebugText() {
 		Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
 		Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
 		Rotation: `${character.rotation.toFixed(2)}°`,
+		ASpeed: `${character.angularSpeed.toFixed(2)}°`,
 		Contacts: `${collisionCheck().map((value) => value ? "T" : "F")}`,
 		Deaths: `${deaths}`,
 		FPS: `${fps.toFixed(2)}`,
@@ -204,7 +209,6 @@ function collisionResolve() {
 		factor /= 2;
 	}
 	character.center.y += factor * 2; // Keep character in ground to prevent gravity next update
-}
 // Game mechanics
 // Game loop
 export function onKeyDown(e) {
@@ -234,10 +238,10 @@ function handleHeld(deltaTime) {
 		}
 	}
 	if (heldKeys.has("x") || heldKeys.has("x") || heldKeys.has("ArrowUp")) {
-		character.rotation = (character.rotation + ROTATION_SENSITIVITY * deltaTime) % 360; // Clockwise
+		character.angularSpeed += ANGULAR_SENSITIVITY * deltaTime; // Clockwise
 	}
 	if (heldKeys.has("Z") || heldKeys.has("z") || heldKeys.has("ArrowDown")) {
-		character.rotation = (character.rotation - ROTATION_SENSITIVITY * deltaTime) % 360; // Counterclockwise
+		character.angularSpeed -= ANGULAR_SENSITIVITY * deltaTime; // Counterclockwise
 	}
 }
 export function update(deltaTime) {
