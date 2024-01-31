@@ -8,6 +8,7 @@ const SENSITIVITY = 1000; // px / sec^2
 const MAX_SPEED = 750; // px / sec
 // Angular speed
 const ANGULAR_GRAVITY = 360; // deg / sec^2
+const ANGULAR_DRAG = 1; // 1 / sec somehow
 const ANGULAR_SENSITIVITY = 540; // deg / sec^2
 const MAX_ANGULAR_SPEED = 180; // deg / sec
 // Rendering
@@ -94,6 +95,12 @@ class Character extends Drawable {
 			const contactAngle = contacts.findIndex(Boolean) * 45 + 225; // 225° is angle of top left corner in Canvas (inverted y-axis) coordinates
 			const direction = -Math.sign(Math.cos((contactAngle + this.rotation) * Math.PI / 180));
 			this.angularSpeed += direction * ANGULAR_GRAVITY * deltaTime;
+		}
+		// Angular drag
+		if (Math.abs(this.angularSpeed) < Math.abs(ANGULAR_DRAG * this.angularSpeed * deltaTime)) {
+			this.angularSpeed = 0;
+		} else {
+			this.angularSpeed -= ANGULAR_DRAG * this.angularSpeed * deltaTime;
 		}
 		// Collision
 		if (collisionCheck().some(Boolean)) { // Cannot use contacts again because angle change
