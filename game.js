@@ -240,7 +240,6 @@ function handleHeld(deltaTime) {
 	}
 }
 export function update(deltaTime) {
-	deltaTime /= 1000; // Convert to seconds
 	time = window.performance.now() - startTime;
 	fps = 1 / deltaTime;
 	// Handle held keys

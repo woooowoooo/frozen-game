@@ -196,23 +196,29 @@ const stateMachine = new StateMachine({
 stateMachines.main = stateMachine;
 // Main loop
 const DEBUG_FPS = 5;
-const FRAME_TIME = 1000 / DEBUG_FPS;
+const FRAME_TIME = 1 / DEBUG_FPS;
+const MAX_DELTA_TIME = 1 / 50;
 let lastTime = window.performance.now();
 function loop(time) {
-	const deltaTime = time - lastTime;
+	let deltaTime = (time - lastTime) / 1000; // Convert to seconds
 	// Lock to low framerate when debugging
 	if (settings.debug && settings.debugFPS && deltaTime < FRAME_TIME) {
 		requestAnimationFrame(loop);
 		return;
 	}
 	lastTime = time;
-	// Break on game loss
-	if (!stateMachine.is("game")) {
-		return;
+	// Update game state (input handling is done in game.js)
+	let changed = false;
+	while (deltaTime > 0) { // Update multiple times if time change is too large
+		// Break on game loss
+		if (!stateMachine.is("game")) {
+			return;
+		}
+		changed |= update(Math.min(MAX_DELTA_TIME, deltaTime)); // ||= would short-circuit
+		deltaTime -= MAX_DELTA_TIME;
 	}
-	// Game loop (handling is done in game.js)
-	const changed = update(deltaTime);
-	if (changed) { // If level has updated
+	// Render if anything changed
+	if (changed) {
 		render();
 	}
 	requestAnimationFrame(loop);
