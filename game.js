@@ -105,6 +105,28 @@ class Character extends Drawable {
 	}
 }
 // Game and level management
+function drawDebugText() {
+	changed = true;
+	context.fillStyle = colors.text;
+	context.font = "30px monospace";
+	const texts = {
+		Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
+		Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
+		Rotation: `${character.rotation.toFixed(2)}°`,
+		Contacts: `${collisionCheck().map((value) => value ? "T" : "F")}`,
+		Deaths: `${deaths}`,
+		FPS: `${fps.toFixed(2)}`,
+		Time: `${time / 1000} seconds`
+	};
+	let textY = DEBUG_Y - (Object.keys(texts).length - 1) * DEBUG_LINE_HEIGHT;
+	for (const [key, value] of Object.entries(texts)) {
+		context.textAlign = "right";
+		context.fillText(`${key}: `, DEBUG_X, textY);
+		context.textAlign = "left";
+		context.fillText(value, DEBUG_X, textY);
+		textY += DEBUG_LINE_HEIGHT;
+	}
+}
 export function newGame() {
 	heldKeys.clear();
 	character = new Character();
@@ -119,28 +141,7 @@ export function newGame() {
 	// Add objects
 	objects.set("background", new Drawable(() => context.drawImage(images[`level${levelNumber}`], 0, 0, 1920, 1280))); // Replaces placeholder background
 	if (settings.debug) {
-		objects.set("debug", new Drawable(() => {
-			changed = true;
-			context.fillStyle = colors.text;
-			context.font = "30px monospace";
-			const texts = {
-				Center: `${character.center.x.toFixed(4)}, ${character.center.y.toFixed(4)}`,
-				Speed: `${character.speed.x.toFixed(2)}, ${character.speed.y.toFixed(2)}`,
-				Rotation: `${character.rotation.toFixed(2)}°`,
-				Contacts: `${collisionCheck().map((value) => value ? "T" : "F")}`,
-				Deaths: `${deaths}`,
-				FPS: `${fps.toFixed(2)}`,
-				Time: `${time / 1000} seconds`
-			};
-			let textY = DEBUG_Y - (Object.keys(texts).length - 1) * DEBUG_LINE_HEIGHT;
-			for (const [key, value] of Object.entries(texts)) {
-				context.textAlign = "right";
-				context.fillText(`${key}: `, DEBUG_X, textY);
-				context.textAlign = "left";
-				context.fillText(value, DEBUG_X, textY);
-				textY += DEBUG_LINE_HEIGHT;
-			}
-		}));
+		objects.set("debug", new Drawable(drawDebugText));
 	}
 }
 function newLevel(number) {
