@@ -9,6 +9,7 @@ const MAX_SPEED = 750; // px / sec
 // Angular speed
 const ANGULAR_GRAVITY = 360; // deg / sec^2
 const ANGULAR_SENSITIVITY = 540; // deg / sec^2
+const MAX_ANGULAR_SPEED = 180; // deg / sec
 // Rendering
 const DEBUG_X = 200;
 const DEBUG_Y = 1260;
@@ -239,9 +240,11 @@ function handleHeld(deltaTime) {
 	}
 	if (heldKeys.has("x") || heldKeys.has("x") || heldKeys.has("ArrowUp")) {
 		character.angularSpeed += ANGULAR_SENSITIVITY * deltaTime; // Clockwise
+		character.angularSpeed = Math.min(character.angularSpeed, MAX_ANGULAR_SPEED);
 	}
 	if (heldKeys.has("Z") || heldKeys.has("z") || heldKeys.has("ArrowDown")) {
 		character.angularSpeed -= ANGULAR_SENSITIVITY * deltaTime; // Counterclockwise
+		character.angularSpeed = Math.max(character.angularSpeed, -MAX_ANGULAR_SPEED);
 	}
 }
 export function update(deltaTime) {
